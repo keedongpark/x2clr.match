@@ -89,6 +89,10 @@
       <Project>{9205a83e-86bb-4b13-bf92-b0c37f43b472}</Project>
       <Name>Events</Name>
     </ProjectReference>
+    <ProjectReference Include="..\x2clr\x2\x2clr.net40.csproj">
+      <Project>{79a3e41b-fa7f-4ed8-86ab-fcf61a6f65ba}</Project>
+      <Name>x2clr.net40</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Client\" />

@@ -90,6 +90,10 @@
       <Project>{18ecfcbc-1d54-4bfb-96c7-4af4ffaf6ea2}</Project>
       <Name>Server</Name>
     </ProjectReference>
+    <ProjectReference Include="..\x2clr\x2\x2clr.net40.csproj">
+      <Project>{79a3e41b-fa7f-4ed8-86ab-fcf61a6f65ba}</Project>
+      <Name>x2clr.net40</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
