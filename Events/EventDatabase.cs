@@ -6,16 +6,15 @@ using System.Text;
 
 using x2;
 
-namespace Events.Login
+namespace Events.Database
 {
-    public class EventLoginReq : Event
+    public class EventCreateOrLoadUserReq : Event
     {
         new protected static readonly Tag tag;
 
         new public static int TypeId { get { return tag.TypeId; } }
 
         private string account_;
-        private string password_;
 
         public string Account
         {
@@ -27,34 +26,24 @@ namespace Events.Login
             }
         }
 
-        public string Password
+        static EventCreateOrLoadUserReq()
         {
-            get { return password_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 1);
-                password_ = value;
-            }
+            tag = new Tag(Event.tag, typeof(EventCreateOrLoadUserReq), 1,
+                    (int)EventDatabaseTypes.CreateOrLoadUser);
         }
 
-        static EventLoginReq()
+        public new static EventCreateOrLoadUserReq New()
         {
-            tag = new Tag(Event.tag, typeof(EventLoginReq), 2,
-                    (int)EventLoginTypes.LoginReq);
+            return new EventCreateOrLoadUserReq();
         }
 
-        public new static EventLoginReq New()
-        {
-            return new EventLoginReq();
-        }
-
-        public EventLoginReq()
+        public EventCreateOrLoadUserReq()
             : base(tag.NumProps)
         {
             Initialize();
         }
 
-        protected EventLoginReq(int length)
+        protected EventCreateOrLoadUserReq(int length)
             : base(length + tag.NumProps)
         {
             Initialize();
@@ -66,12 +55,8 @@ namespace Events.Login
             {
                 return false;
             }
-            EventLoginReq o = (EventLoginReq)other;
+            EventCreateOrLoadUserReq o = (EventCreateOrLoadUserReq)other;
             if (account_ != o.account_)
-            {
-                return false;
-            }
-            if (password_ != o.password_)
             {
                 return false;
             }
@@ -91,11 +76,6 @@ namespace Events.Login
                 hash.Update(tag.Offset + 0);
                 hash.Update(account_);
             }
-            if (touched[1])
-            {
-                hash.Update(tag.Offset + 1);
-                hash.Update(password_);
-            }
             return hash.Code;
         }
 
@@ -111,7 +91,7 @@ namespace Events.Login
 
         public override Func<Event> GetFactoryMethod()
         {
-            return EventLoginReq.New;
+            return EventCreateOrLoadUserReq.New;
         }
 
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
@@ -120,18 +100,11 @@ namespace Events.Login
             {
                 return false;
             }
-            EventLoginReq o = (EventLoginReq)other;
+            EventCreateOrLoadUserReq o = (EventCreateOrLoadUserReq)other;
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
                 if (account_ != o.account_)
-                {
-                    return false;
-                }
-            }
-            if (touched[1])
-            {
-                if (password_ != o.password_)
                 {
                     return false;
                 }
@@ -147,17 +120,12 @@ namespace Events.Login
             {
                 deserializer.Read(out account_);
             }
-            if (touched[1])
-            {
-                deserializer.Read(out password_);
-            }
         }
 
         public override void Deserialize(VerboseDeserializer deserializer)
         {
             base.Deserialize(deserializer);
             deserializer.Read("Account", out account_);
-            deserializer.Read("Password", out password_);
         }
 
         public override void Serialize(Serializer serializer)
@@ -168,17 +136,12 @@ namespace Events.Login
             {
                 serializer.Write(account_);
             }
-            if (touched[1])
-            {
-                serializer.Write(password_);
-            }
         }
 
         public override void Serialize(VerboseSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write("Account", account_);
-            serializer.Write("Password", password_);
         }
 
         public override int GetLength()
@@ -189,10 +152,6 @@ namespace Events.Login
             {
                 length += Serializer.GetLength(account_);
             }
-            if (touched[1])
-            {
-                length += Serializer.GetLength(password_);
-            }
             return length;
         }
 
@@ -200,17 +159,15 @@ namespace Events.Login
         {
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" Account=\"{0}\"", account_.Replace("\"", "\\\""));
-            stringBuilder.AppendFormat(" Password=\"{0}\"", password_.Replace("\"", "\\\""));
         }
 
         private void Initialize()
         {
             account_ = "";
-            password_ = "";
         }
     }
 
-    public class EventLoginResp : Event
+    public class EventLoadUserResp : Event
     {
         new protected static readonly Tag tag;
 
@@ -218,6 +175,10 @@ namespace Events.Login
 
         private string account_;
         private int result_;
+        private string nick_;
+        private string password_;
+        private string deviceId_;
+        private int gold_;
 
         public string Account
         {
@@ -239,24 +200,64 @@ namespace Events.Login
             }
         }
 
-        static EventLoginResp()
+        public string Nick
         {
-            tag = new Tag(Event.tag, typeof(EventLoginResp), 2,
-                    (int)EventLoginTypes.LoginResp);
+            get { return nick_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 2);
+                nick_ = value;
+            }
         }
 
-        public new static EventLoginResp New()
+        public string Password
         {
-            return new EventLoginResp();
+            get { return password_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 3);
+                password_ = value;
+            }
         }
 
-        public EventLoginResp()
+        public string DeviceId
+        {
+            get { return deviceId_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 4);
+                deviceId_ = value;
+            }
+        }
+
+        public int Gold
+        {
+            get { return gold_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 5);
+                gold_ = value;
+            }
+        }
+
+        static EventLoadUserResp()
+        {
+            tag = new Tag(Event.tag, typeof(EventLoadUserResp), 6,
+                    (int)EventDatabaseTypes.LoadUserResp);
+        }
+
+        public new static EventLoadUserResp New()
+        {
+            return new EventLoadUserResp();
+        }
+
+        public EventLoadUserResp()
             : base(tag.NumProps)
         {
             Initialize();
         }
 
-        protected EventLoginResp(int length)
+        protected EventLoadUserResp(int length)
             : base(length + tag.NumProps)
         {
             Initialize();
@@ -268,12 +269,28 @@ namespace Events.Login
             {
                 return false;
             }
-            EventLoginResp o = (EventLoginResp)other;
+            EventLoadUserResp o = (EventLoadUserResp)other;
             if (account_ != o.account_)
             {
                 return false;
             }
             if (result_ != o.result_)
+            {
+                return false;
+            }
+            if (nick_ != o.nick_)
+            {
+                return false;
+            }
+            if (password_ != o.password_)
+            {
+                return false;
+            }
+            if (deviceId_ != o.deviceId_)
+            {
+                return false;
+            }
+            if (gold_ != o.gold_)
             {
                 return false;
             }
@@ -298,6 +315,26 @@ namespace Events.Login
                 hash.Update(tag.Offset + 1);
                 hash.Update(result_);
             }
+            if (touched[2])
+            {
+                hash.Update(tag.Offset + 2);
+                hash.Update(nick_);
+            }
+            if (touched[3])
+            {
+                hash.Update(tag.Offset + 3);
+                hash.Update(password_);
+            }
+            if (touched[4])
+            {
+                hash.Update(tag.Offset + 4);
+                hash.Update(deviceId_);
+            }
+            if (touched[5])
+            {
+                hash.Update(tag.Offset + 5);
+                hash.Update(gold_);
+            }
             return hash.Code;
         }
 
@@ -313,7 +350,7 @@ namespace Events.Login
 
         public override Func<Event> GetFactoryMethod()
         {
-            return EventLoginResp.New;
+            return EventLoadUserResp.New;
         }
 
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
@@ -322,7 +359,7 @@ namespace Events.Login
             {
                 return false;
             }
-            EventLoginResp o = (EventLoginResp)other;
+            EventLoadUserResp o = (EventLoadUserResp)other;
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
@@ -334,6 +371,34 @@ namespace Events.Login
             if (touched[1])
             {
                 if (result_ != o.result_)
+                {
+                    return false;
+                }
+            }
+            if (touched[2])
+            {
+                if (nick_ != o.nick_)
+                {
+                    return false;
+                }
+            }
+            if (touched[3])
+            {
+                if (password_ != o.password_)
+                {
+                    return false;
+                }
+            }
+            if (touched[4])
+            {
+                if (deviceId_ != o.deviceId_)
+                {
+                    return false;
+                }
+            }
+            if (touched[5])
+            {
+                if (gold_ != o.gold_)
                 {
                     return false;
                 }
@@ -353,6 +418,22 @@ namespace Events.Login
             {
                 deserializer.Read(out result_);
             }
+            if (touched[2])
+            {
+                deserializer.Read(out nick_);
+            }
+            if (touched[3])
+            {
+                deserializer.Read(out password_);
+            }
+            if (touched[4])
+            {
+                deserializer.Read(out deviceId_);
+            }
+            if (touched[5])
+            {
+                deserializer.Read(out gold_);
+            }
         }
 
         public override void Deserialize(VerboseDeserializer deserializer)
@@ -360,6 +441,10 @@ namespace Events.Login
             base.Deserialize(deserializer);
             deserializer.Read("Account", out account_);
             deserializer.Read("Result", out result_);
+            deserializer.Read("Nick", out nick_);
+            deserializer.Read("Password", out password_);
+            deserializer.Read("DeviceId", out deviceId_);
+            deserializer.Read("Gold", out gold_);
         }
 
         public override void Serialize(Serializer serializer)
@@ -374,6 +459,22 @@ namespace Events.Login
             {
                 serializer.Write(result_);
             }
+            if (touched[2])
+            {
+                serializer.Write(nick_);
+            }
+            if (touched[3])
+            {
+                serializer.Write(password_);
+            }
+            if (touched[4])
+            {
+                serializer.Write(deviceId_);
+            }
+            if (touched[5])
+            {
+                serializer.Write(gold_);
+            }
         }
 
         public override void Serialize(VerboseSerializer serializer)
@@ -381,6 +482,10 @@ namespace Events.Login
             base.Serialize(serializer);
             serializer.Write("Account", account_);
             serializer.Write("Result", result_);
+            serializer.Write("Nick", nick_);
+            serializer.Write("Password", password_);
+            serializer.Write("DeviceId", deviceId_);
+            serializer.Write("Gold", gold_);
         }
 
         public override int GetLength()
@@ -395,6 +500,22 @@ namespace Events.Login
             {
                 length += Serializer.GetLength(result_);
             }
+            if (touched[2])
+            {
+                length += Serializer.GetLength(nick_);
+            }
+            if (touched[3])
+            {
+                length += Serializer.GetLength(password_);
+            }
+            if (touched[4])
+            {
+                length += Serializer.GetLength(deviceId_);
+            }
+            if (touched[5])
+            {
+                length += Serializer.GetLength(gold_);
+            }
             return length;
         }
 
@@ -403,377 +524,183 @@ namespace Events.Login
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" Account=\"{0}\"", account_.Replace("\"", "\\\""));
             stringBuilder.AppendFormat(" Result={0}", result_);
+            stringBuilder.AppendFormat(" Nick=\"{0}\"", nick_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Password=\"{0}\"", password_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" DeviceId=\"{0}\"", deviceId_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Gold={0}", gold_);
         }
 
         private void Initialize()
         {
             account_ = "";
             result_ = 0;
-        }
-    }
-
-    public class EventLogout : Event
-    {
-        new protected static readonly Tag tag;
-
-        new public static int TypeId { get { return tag.TypeId; } }
-
-        private string account_;
-
-        public string Account
-        {
-            get { return account_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 0);
-                account_ = value;
-            }
-        }
-
-        static EventLogout()
-        {
-            tag = new Tag(Event.tag, typeof(EventLogout), 1,
-                    (int)EventLoginTypes.Logout);
-        }
-
-        public new static EventLogout New()
-        {
-            return new EventLogout();
-        }
-
-        public EventLogout()
-            : base(tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected EventLogout(int length)
-            : base(length + tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected override bool EqualsTo(Cell other)
-        {
-            if (!base.EqualsTo(other))
-            {
-                return false;
-            }
-            EventLogout o = (EventLogout)other;
-            if (account_ != o.account_)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override int GetHashCode(Fingerprint fingerprint)
-        {
-            var hash = new Hash(base.GetHashCode(fingerprint));
-            if (fingerprint.Length <= tag.Offset)
-            {
-                return hash.Code;
-            }
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                hash.Update(tag.Offset + 0);
-                hash.Update(account_);
-            }
-            return hash.Code;
-        }
-
-        public override int GetTypeId()
-        {
-            return tag.TypeId;
-        }
-
-        public override Cell.Tag GetTypeTag() 
-        {
-            return tag;
-        }
-
-        public override Func<Event> GetFactoryMethod()
-        {
-            return EventLogout.New;
-        }
-
-        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
-        {
-            if (!base.IsEquivalent(other, fingerprint))
-            {
-                return false;
-            }
-            EventLogout o = (EventLogout)other;
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                if (account_ != o.account_)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public override void Deserialize(Deserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                deserializer.Read(out account_);
-            }
-        }
-
-        public override void Deserialize(VerboseDeserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            deserializer.Read("Account", out account_);
-        }
-
-        public override void Serialize(Serializer serializer)
-        {
-            base.Serialize(serializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                serializer.Write(account_);
-            }
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-            serializer.Write("Account", account_);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                length += Serializer.GetLength(account_);
-            }
-            return length;
-        }
-
-        protected override void Describe(StringBuilder stringBuilder)
-        {
-            base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Account=\"{0}\"", account_.Replace("\"", "\\\""));
-        }
-
-        private void Initialize()
-        {
-            account_ = "";
-        }
-    }
-
-    public class EventMasterLoginReq : Event
-    {
-        new protected static readonly Tag tag;
-
-        new public static int TypeId { get { return tag.TypeId; } }
-
-        private string account_;
-        private string password_;
-
-        public string Account
-        {
-            get { return account_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 0);
-                account_ = value;
-            }
-        }
-
-        public string Password
-        {
-            get { return password_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 1);
-                password_ = value;
-            }
-        }
-
-        static EventMasterLoginReq()
-        {
-            tag = new Tag(Event.tag, typeof(EventMasterLoginReq), 2,
-                    (int)EventLoginTypes.MasterLoginReq);
-        }
-
-        public new static EventMasterLoginReq New()
-        {
-            return new EventMasterLoginReq();
-        }
-
-        public EventMasterLoginReq()
-            : base(tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected EventMasterLoginReq(int length)
-            : base(length + tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected override bool EqualsTo(Cell other)
-        {
-            if (!base.EqualsTo(other))
-            {
-                return false;
-            }
-            EventMasterLoginReq o = (EventMasterLoginReq)other;
-            if (account_ != o.account_)
-            {
-                return false;
-            }
-            if (password_ != o.password_)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override int GetHashCode(Fingerprint fingerprint)
-        {
-            var hash = new Hash(base.GetHashCode(fingerprint));
-            if (fingerprint.Length <= tag.Offset)
-            {
-                return hash.Code;
-            }
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                hash.Update(tag.Offset + 0);
-                hash.Update(account_);
-            }
-            if (touched[1])
-            {
-                hash.Update(tag.Offset + 1);
-                hash.Update(password_);
-            }
-            return hash.Code;
-        }
-
-        public override int GetTypeId()
-        {
-            return tag.TypeId;
-        }
-
-        public override Cell.Tag GetTypeTag() 
-        {
-            return tag;
-        }
-
-        public override Func<Event> GetFactoryMethod()
-        {
-            return EventMasterLoginReq.New;
-        }
-
-        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
-        {
-            if (!base.IsEquivalent(other, fingerprint))
-            {
-                return false;
-            }
-            EventMasterLoginReq o = (EventMasterLoginReq)other;
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                if (account_ != o.account_)
-                {
-                    return false;
-                }
-            }
-            if (touched[1])
-            {
-                if (password_ != o.password_)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public override void Deserialize(Deserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                deserializer.Read(out account_);
-            }
-            if (touched[1])
-            {
-                deserializer.Read(out password_);
-            }
-        }
-
-        public override void Deserialize(VerboseDeserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            deserializer.Read("Account", out account_);
-            deserializer.Read("Password", out password_);
-        }
-
-        public override void Serialize(Serializer serializer)
-        {
-            base.Serialize(serializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                serializer.Write(account_);
-            }
-            if (touched[1])
-            {
-                serializer.Write(password_);
-            }
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-            serializer.Write("Account", account_);
-            serializer.Write("Password", password_);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                length += Serializer.GetLength(account_);
-            }
-            if (touched[1])
-            {
-                length += Serializer.GetLength(password_);
-            }
-            return length;
-        }
-
-        protected override void Describe(StringBuilder stringBuilder)
-        {
-            base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Account=\"{0}\"", account_.Replace("\"", "\\\""));
-            stringBuilder.AppendFormat(" Password=\"{0}\"", password_.Replace("\"", "\\\""));
-        }
-
-        private void Initialize()
-        {
-            account_ = "";
+            nick_ = "";
             password_ = "";
+            deviceId_ = "";
+            gold_ = 0;
         }
     }
 
-    public class EventMasterLoginResp : Event
+    public class EventUpdateUserReq : Event
+    {
+        new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
+
+        private string account_;
+
+        public string Account
+        {
+            get { return account_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                account_ = value;
+            }
+        }
+
+        static EventUpdateUserReq()
+        {
+            tag = new Tag(Event.tag, typeof(EventUpdateUserReq), 1,
+                    (int)EventDatabaseTypes.UpdateUserReq);
+        }
+
+        public new static EventUpdateUserReq New()
+        {
+            return new EventUpdateUserReq();
+        }
+
+        public EventUpdateUserReq()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected EventUpdateUserReq(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            EventUpdateUserReq o = (EventUpdateUserReq)other;
+            if (account_ != o.account_)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(tag.Offset + 0);
+                hash.Update(account_);
+            }
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return EventUpdateUserReq.New;
+        }
+
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        {
+            if (!base.IsEquivalent(other, fingerprint))
+            {
+                return false;
+            }
+            EventUpdateUserReq o = (EventUpdateUserReq)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (account_ != o.account_)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override void Deserialize(Deserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                deserializer.Read(out account_);
+            }
+        }
+
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            deserializer.Read("Account", out account_);
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(account_);
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer)
+        {
+            base.Serialize(serializer);
+            serializer.Write("Account", account_);
+        }
+
+        public override int GetLength()
+        {
+            int length = base.GetLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetLength(account_);
+            }
+            return length;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+            stringBuilder.AppendFormat(" Account=\"{0}\"", account_.Replace("\"", "\\\""));
+        }
+
+        private void Initialize()
+        {
+            account_ = "";
+        }
+    }
+
+    public class EventUpdateUserResp : Event
     {
         new protected static readonly Tag tag;
 
@@ -781,6 +708,10 @@ namespace Events.Login
 
         private string account_;
         private int result_;
+        private string nick_;
+        private string password_;
+        private string deviceId_;
+        private int gold_;
 
         public string Account
         {
@@ -802,24 +733,64 @@ namespace Events.Login
             }
         }
 
-        static EventMasterLoginResp()
+        public string Nick
         {
-            tag = new Tag(Event.tag, typeof(EventMasterLoginResp), 2,
-                    (int)EventLoginTypes.MasterLoginResp);
+            get { return nick_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 2);
+                nick_ = value;
+            }
         }
 
-        public new static EventMasterLoginResp New()
+        public string Password
         {
-            return new EventMasterLoginResp();
+            get { return password_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 3);
+                password_ = value;
+            }
         }
 
-        public EventMasterLoginResp()
+        public string DeviceId
+        {
+            get { return deviceId_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 4);
+                deviceId_ = value;
+            }
+        }
+
+        public int Gold
+        {
+            get { return gold_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 5);
+                gold_ = value;
+            }
+        }
+
+        static EventUpdateUserResp()
+        {
+            tag = new Tag(Event.tag, typeof(EventUpdateUserResp), 6,
+                    (int)EventDatabaseTypes.UpdateUserResp);
+        }
+
+        public new static EventUpdateUserResp New()
+        {
+            return new EventUpdateUserResp();
+        }
+
+        public EventUpdateUserResp()
             : base(tag.NumProps)
         {
             Initialize();
         }
 
-        protected EventMasterLoginResp(int length)
+        protected EventUpdateUserResp(int length)
             : base(length + tag.NumProps)
         {
             Initialize();
@@ -831,12 +802,28 @@ namespace Events.Login
             {
                 return false;
             }
-            EventMasterLoginResp o = (EventMasterLoginResp)other;
+            EventUpdateUserResp o = (EventUpdateUserResp)other;
             if (account_ != o.account_)
             {
                 return false;
             }
             if (result_ != o.result_)
+            {
+                return false;
+            }
+            if (nick_ != o.nick_)
+            {
+                return false;
+            }
+            if (password_ != o.password_)
+            {
+                return false;
+            }
+            if (deviceId_ != o.deviceId_)
+            {
+                return false;
+            }
+            if (gold_ != o.gold_)
             {
                 return false;
             }
@@ -861,6 +848,26 @@ namespace Events.Login
                 hash.Update(tag.Offset + 1);
                 hash.Update(result_);
             }
+            if (touched[2])
+            {
+                hash.Update(tag.Offset + 2);
+                hash.Update(nick_);
+            }
+            if (touched[3])
+            {
+                hash.Update(tag.Offset + 3);
+                hash.Update(password_);
+            }
+            if (touched[4])
+            {
+                hash.Update(tag.Offset + 4);
+                hash.Update(deviceId_);
+            }
+            if (touched[5])
+            {
+                hash.Update(tag.Offset + 5);
+                hash.Update(gold_);
+            }
             return hash.Code;
         }
 
@@ -876,7 +883,7 @@ namespace Events.Login
 
         public override Func<Event> GetFactoryMethod()
         {
-            return EventMasterLoginResp.New;
+            return EventUpdateUserResp.New;
         }
 
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
@@ -885,7 +892,7 @@ namespace Events.Login
             {
                 return false;
             }
-            EventMasterLoginResp o = (EventMasterLoginResp)other;
+            EventUpdateUserResp o = (EventUpdateUserResp)other;
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
@@ -897,6 +904,34 @@ namespace Events.Login
             if (touched[1])
             {
                 if (result_ != o.result_)
+                {
+                    return false;
+                }
+            }
+            if (touched[2])
+            {
+                if (nick_ != o.nick_)
+                {
+                    return false;
+                }
+            }
+            if (touched[3])
+            {
+                if (password_ != o.password_)
+                {
+                    return false;
+                }
+            }
+            if (touched[4])
+            {
+                if (deviceId_ != o.deviceId_)
+                {
+                    return false;
+                }
+            }
+            if (touched[5])
+            {
+                if (gold_ != o.gold_)
                 {
                     return false;
                 }
@@ -916,6 +951,22 @@ namespace Events.Login
             {
                 deserializer.Read(out result_);
             }
+            if (touched[2])
+            {
+                deserializer.Read(out nick_);
+            }
+            if (touched[3])
+            {
+                deserializer.Read(out password_);
+            }
+            if (touched[4])
+            {
+                deserializer.Read(out deviceId_);
+            }
+            if (touched[5])
+            {
+                deserializer.Read(out gold_);
+            }
         }
 
         public override void Deserialize(VerboseDeserializer deserializer)
@@ -923,6 +974,10 @@ namespace Events.Login
             base.Deserialize(deserializer);
             deserializer.Read("Account", out account_);
             deserializer.Read("Result", out result_);
+            deserializer.Read("Nick", out nick_);
+            deserializer.Read("Password", out password_);
+            deserializer.Read("DeviceId", out deviceId_);
+            deserializer.Read("Gold", out gold_);
         }
 
         public override void Serialize(Serializer serializer)
@@ -937,6 +992,22 @@ namespace Events.Login
             {
                 serializer.Write(result_);
             }
+            if (touched[2])
+            {
+                serializer.Write(nick_);
+            }
+            if (touched[3])
+            {
+                serializer.Write(password_);
+            }
+            if (touched[4])
+            {
+                serializer.Write(deviceId_);
+            }
+            if (touched[5])
+            {
+                serializer.Write(gold_);
+            }
         }
 
         public override void Serialize(VerboseSerializer serializer)
@@ -944,6 +1015,10 @@ namespace Events.Login
             base.Serialize(serializer);
             serializer.Write("Account", account_);
             serializer.Write("Result", result_);
+            serializer.Write("Nick", nick_);
+            serializer.Write("Password", password_);
+            serializer.Write("DeviceId", deviceId_);
+            serializer.Write("Gold", gold_);
         }
 
         public override int GetLength()
@@ -958,6 +1033,22 @@ namespace Events.Login
             {
                 length += Serializer.GetLength(result_);
             }
+            if (touched[2])
+            {
+                length += Serializer.GetLength(nick_);
+            }
+            if (touched[3])
+            {
+                length += Serializer.GetLength(password_);
+            }
+            if (touched[4])
+            {
+                length += Serializer.GetLength(deviceId_);
+            }
+            if (touched[5])
+            {
+                length += Serializer.GetLength(gold_);
+            }
             return length;
         }
 
@@ -966,171 +1057,20 @@ namespace Events.Login
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" Account=\"{0}\"", account_.Replace("\"", "\\\""));
             stringBuilder.AppendFormat(" Result={0}", result_);
+            stringBuilder.AppendFormat(" Nick=\"{0}\"", nick_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Password=\"{0}\"", password_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" DeviceId=\"{0}\"", deviceId_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Gold={0}", gold_);
         }
 
         private void Initialize()
         {
             account_ = "";
             result_ = 0;
-        }
-    }
-
-    public class EventMasterLogout : Event
-    {
-        new protected static readonly Tag tag;
-
-        new public static int TypeId { get { return tag.TypeId; } }
-
-        private string account_;
-
-        public string Account
-        {
-            get { return account_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 0);
-                account_ = value;
-            }
-        }
-
-        static EventMasterLogout()
-        {
-            tag = new Tag(Event.tag, typeof(EventMasterLogout), 1,
-                    (int)EventLoginTypes.MasterLogout);
-        }
-
-        public new static EventMasterLogout New()
-        {
-            return new EventMasterLogout();
-        }
-
-        public EventMasterLogout()
-            : base(tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected EventMasterLogout(int length)
-            : base(length + tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected override bool EqualsTo(Cell other)
-        {
-            if (!base.EqualsTo(other))
-            {
-                return false;
-            }
-            EventMasterLogout o = (EventMasterLogout)other;
-            if (account_ != o.account_)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override int GetHashCode(Fingerprint fingerprint)
-        {
-            var hash = new Hash(base.GetHashCode(fingerprint));
-            if (fingerprint.Length <= tag.Offset)
-            {
-                return hash.Code;
-            }
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                hash.Update(tag.Offset + 0);
-                hash.Update(account_);
-            }
-            return hash.Code;
-        }
-
-        public override int GetTypeId()
-        {
-            return tag.TypeId;
-        }
-
-        public override Cell.Tag GetTypeTag() 
-        {
-            return tag;
-        }
-
-        public override Func<Event> GetFactoryMethod()
-        {
-            return EventMasterLogout.New;
-        }
-
-        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
-        {
-            if (!base.IsEquivalent(other, fingerprint))
-            {
-                return false;
-            }
-            EventMasterLogout o = (EventMasterLogout)other;
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                if (account_ != o.account_)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public override void Deserialize(Deserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                deserializer.Read(out account_);
-            }
-        }
-
-        public override void Deserialize(VerboseDeserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            deserializer.Read("Account", out account_);
-        }
-
-        public override void Serialize(Serializer serializer)
-        {
-            base.Serialize(serializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                serializer.Write(account_);
-            }
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-            serializer.Write("Account", account_);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                length += Serializer.GetLength(account_);
-            }
-            return length;
-        }
-
-        protected override void Describe(StringBuilder stringBuilder)
-        {
-            base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Account=\"{0}\"", account_.Replace("\"", "\\\""));
-        }
-
-        private void Initialize()
-        {
-            account_ = "";
+            nick_ = "";
+            password_ = "";
+            deviceId_ = "";
+            gold_ = 0;
         }
     }
 }

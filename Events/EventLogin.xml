@@ -9,12 +9,10 @@
   <event name="EventLoginResp" id="EventLoginTypes.LoginResp">
     <property name="Account"   type="string"/>
     <property name="Result" type="int32"/>
-    <property name="Guid" type="int32"/>
   </event>
 
   <event name="EventLogout" id="EventLoginTypes.Logout">
     <property name="Account"   type="string"/>
-    <property name="Guid"   type="int32"/>
   </event>
 
   <event name="EventMasterLoginReq" id="EventLoginTypes.MasterLoginReq">
@@ -25,11 +23,9 @@
   <event name="EventMasterLoginResp" id="EventLoginTypes.MasterLoginResp">
     <property name="Account"   type="string"/>
     <property name="Result" type="int32"/>
-    <property name="Guid" type="int32"/>
   </event>
 
   <event name="EventMasterLogout" id="EventLoginTypes.MasterLogout">
     <property name="Account"   type="string"/>
-    <property name="Guid"   type="int32"/>
   </event>
 </x2>

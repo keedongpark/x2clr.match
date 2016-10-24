@@ -6,7 +6,18 @@ using System.Threading.Tasks;
 
 namespace Server.Couchbase
 {
-    class Query
+    public abstract class Query
     {
+        public enum Result
+        {
+            Success, 
+            Fail
+        }
+
+        public string  Reason { get; private set; }
+
+        public abstract Result Execute();
+
+        public abstract void Complete();
     }
 }

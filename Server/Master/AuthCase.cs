@@ -14,20 +14,14 @@ namespace Server.Master
     /// </summary>
     public class AuthCase : Case
     {
-        class Entry
-        {
-            public string Account;
-            public string Nick;
-            public int Guid;
-            public int Handle;         // From SessionServer
-        }
+        Dictionary<string, Shared.User> dic;
 
-        Dictionary<string, Entry> dic;
-        // TODO: After DB processing, Dictionary<int, Entry> indexerGuid;
+        int guid_seq; // temporal 
+
 
         public AuthCase()
         {
-            dic = new Dictionary<string, Entry>();
+            dic = new Dictionary<string, Shared.User>();
         }
 
         protected override void Setup()
@@ -42,25 +36,18 @@ namespace Server.Master
         {
             // Skip DB processing for now
 
-            Entry user;
+            Shared.User user;
 
             if ( !dic.TryGetValue(req.Account, out user) )
             {
-                user = new Entry();
+                user = new Shared.User();
             }
             else
             {
-                // TODO: kickout existing user.  
-
-                if ( user.Handle != req._Handle)
-                {
-                    
-                }
+                // 
             }
 
             user.Account = req.Account;
-            user.Guid = 0;
-            user.Handle = req._Handle;
 
             dic[user.Account] = user;
 
