@@ -9,13 +9,11 @@ namespace Server.Session
 {
     public class UserCase : Case
     {
-        string account;
-        int guid;
+        Shared.User user;
 
-        public UserCase(string account, int guid)
+        public UserCase(Shared.User user)
         {
-            this.account = account;
-            this.guid = guid;
+            this.user = user;
         }
 
         protected override void Setup()
@@ -26,7 +24,6 @@ namespace Server.Session
 
             // Match Response 
 
-            // 동시 처리로 가닥을 잡음. Broadcasting 기반. 프로파일링으로 성능 개선. 
         }
     }
 }

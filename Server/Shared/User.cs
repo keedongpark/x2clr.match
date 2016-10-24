@@ -19,6 +19,6 @@ namespace Server.Shared
 
         public string DeviceId { get; set; }
 
-        public Int64 Gold { get; set; }
+        public int Gold { get; set; }
     }
 }

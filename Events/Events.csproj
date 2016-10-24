@@ -42,10 +42,9 @@
   <ItemGroup>
     <Compile Include="Enums.cs" />
     <Compile Include="ErrorCodes.cs" />
-    <Compile Include="ErrorGame.cs" />
-    <Compile Include="ErrorLobby.cs" />
-    <Compile Include="ErrorLogin.cs" />
     <Compile Include="EventCluster.cs" />
+    <Compile Include="EventDatabase.cs" />
+    <Compile Include="EventDatabaseTypes.cs" />
     <Compile Include="EventInstance.cs" />
     <Compile Include="EventInstanceTypes.cs" />
     <Compile Include="EventLoginTypes.cs" />
@@ -56,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="EventCluster.xml" />
+    <Content Include="EventDatabase.xml" />
     <Content Include="EventInstance.xml">
       <SubType>Designer</SubType>
     </Content>

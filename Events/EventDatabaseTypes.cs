@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Events.Instance
+namespace Events.Database
 {
     /// <summary>
     /// 5001 ~ 6000
@@ -12,9 +12,11 @@ namespace Events.Instance
     public enum EventDatabaseTypes
     {
         Base = 5001, 
-        CreateOrLoadUser, 
-        LoadUser, 
-        UpdateUser, 
+        CreateOrLoadUserReq, 
+        LoadUserReq, 
+        LoadUserResp, 
+        UpdateUserReq, 
+        UpdateUserResp, 
         End
     }
 

@@ -15,6 +15,10 @@ namespace Events.Database
         new public static int TypeId { get { return tag.TypeId; } }
 
         private string account_;
+        private string password_;
+        private string nick_;
+        private string deviceId_;
+        private int context_;
 
         public string Account
         {
@@ -26,10 +30,50 @@ namespace Events.Database
             }
         }
 
+        public string Password
+        {
+            get { return password_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 1);
+                password_ = value;
+            }
+        }
+
+        public string Nick
+        {
+            get { return nick_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 2);
+                nick_ = value;
+            }
+        }
+
+        public string DeviceId
+        {
+            get { return deviceId_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 3);
+                deviceId_ = value;
+            }
+        }
+
+        public int Context
+        {
+            get { return context_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 4);
+                context_ = value;
+            }
+        }
+
         static EventCreateOrLoadUserReq()
         {
-            tag = new Tag(Event.tag, typeof(EventCreateOrLoadUserReq), 1,
-                    (int)EventDatabaseTypes.CreateOrLoadUser);
+            tag = new Tag(Event.tag, typeof(EventCreateOrLoadUserReq), 5,
+                    (int)EventDatabaseTypes.CreateOrLoadUserReq);
         }
 
         public new static EventCreateOrLoadUserReq New()
@@ -60,6 +104,22 @@ namespace Events.Database
             {
                 return false;
             }
+            if (password_ != o.password_)
+            {
+                return false;
+            }
+            if (nick_ != o.nick_)
+            {
+                return false;
+            }
+            if (deviceId_ != o.deviceId_)
+            {
+                return false;
+            }
+            if (context_ != o.context_)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -75,6 +135,26 @@ namespace Events.Database
             {
                 hash.Update(tag.Offset + 0);
                 hash.Update(account_);
+            }
+            if (touched[1])
+            {
+                hash.Update(tag.Offset + 1);
+                hash.Update(password_);
+            }
+            if (touched[2])
+            {
+                hash.Update(tag.Offset + 2);
+                hash.Update(nick_);
+            }
+            if (touched[3])
+            {
+                hash.Update(tag.Offset + 3);
+                hash.Update(deviceId_);
+            }
+            if (touched[4])
+            {
+                hash.Update(tag.Offset + 4);
+                hash.Update(context_);
             }
             return hash.Code;
         }
@@ -109,6 +189,34 @@ namespace Events.Database
                     return false;
                 }
             }
+            if (touched[1])
+            {
+                if (password_ != o.password_)
+                {
+                    return false;
+                }
+            }
+            if (touched[2])
+            {
+                if (nick_ != o.nick_)
+                {
+                    return false;
+                }
+            }
+            if (touched[3])
+            {
+                if (deviceId_ != o.deviceId_)
+                {
+                    return false;
+                }
+            }
+            if (touched[4])
+            {
+                if (context_ != o.context_)
+                {
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -120,12 +228,32 @@ namespace Events.Database
             {
                 deserializer.Read(out account_);
             }
+            if (touched[1])
+            {
+                deserializer.Read(out password_);
+            }
+            if (touched[2])
+            {
+                deserializer.Read(out nick_);
+            }
+            if (touched[3])
+            {
+                deserializer.Read(out deviceId_);
+            }
+            if (touched[4])
+            {
+                deserializer.Read(out context_);
+            }
         }
 
         public override void Deserialize(VerboseDeserializer deserializer)
         {
             base.Deserialize(deserializer);
             deserializer.Read("Account", out account_);
+            deserializer.Read("Password", out password_);
+            deserializer.Read("Nick", out nick_);
+            deserializer.Read("DeviceId", out deviceId_);
+            deserializer.Read("Context", out context_);
         }
 
         public override void Serialize(Serializer serializer)
@@ -136,12 +264,32 @@ namespace Events.Database
             {
                 serializer.Write(account_);
             }
+            if (touched[1])
+            {
+                serializer.Write(password_);
+            }
+            if (touched[2])
+            {
+                serializer.Write(nick_);
+            }
+            if (touched[3])
+            {
+                serializer.Write(deviceId_);
+            }
+            if (touched[4])
+            {
+                serializer.Write(context_);
+            }
         }
 
         public override void Serialize(VerboseSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write("Account", account_);
+            serializer.Write("Password", password_);
+            serializer.Write("Nick", nick_);
+            serializer.Write("DeviceId", deviceId_);
+            serializer.Write("Context", context_);
         }
 
         public override int GetLength()
@@ -152,6 +300,22 @@ namespace Events.Database
             {
                 length += Serializer.GetLength(account_);
             }
+            if (touched[1])
+            {
+                length += Serializer.GetLength(password_);
+            }
+            if (touched[2])
+            {
+                length += Serializer.GetLength(nick_);
+            }
+            if (touched[3])
+            {
+                length += Serializer.GetLength(deviceId_);
+            }
+            if (touched[4])
+            {
+                length += Serializer.GetLength(context_);
+            }
             return length;
         }
 
@@ -159,11 +323,221 @@ namespace Events.Database
         {
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" Account=\"{0}\"", account_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Password=\"{0}\"", password_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Nick=\"{0}\"", nick_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" DeviceId=\"{0}\"", deviceId_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Context={0}", context_);
         }
 
         private void Initialize()
         {
             account_ = "";
+            password_ = "";
+            nick_ = "";
+            deviceId_ = "";
+            context_ = 0;
+        }
+    }
+
+    public class EventLoadUserReq : Event
+    {
+        new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
+
+        private string account_;
+        private int context_;
+
+        public string Account
+        {
+            get { return account_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                account_ = value;
+            }
+        }
+
+        public int Context
+        {
+            get { return context_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 1);
+                context_ = value;
+            }
+        }
+
+        static EventLoadUserReq()
+        {
+            tag = new Tag(Event.tag, typeof(EventLoadUserReq), 2,
+                    (int)EventDatabaseTypes.LoadUserReq);
+        }
+
+        public new static EventLoadUserReq New()
+        {
+            return new EventLoadUserReq();
+        }
+
+        public EventLoadUserReq()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected EventLoadUserReq(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            EventLoadUserReq o = (EventLoadUserReq)other;
+            if (account_ != o.account_)
+            {
+                return false;
+            }
+            if (context_ != o.context_)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(tag.Offset + 0);
+                hash.Update(account_);
+            }
+            if (touched[1])
+            {
+                hash.Update(tag.Offset + 1);
+                hash.Update(context_);
+            }
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return EventLoadUserReq.New;
+        }
+
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        {
+            if (!base.IsEquivalent(other, fingerprint))
+            {
+                return false;
+            }
+            EventLoadUserReq o = (EventLoadUserReq)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (account_ != o.account_)
+                {
+                    return false;
+                }
+            }
+            if (touched[1])
+            {
+                if (context_ != o.context_)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override void Deserialize(Deserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                deserializer.Read(out account_);
+            }
+            if (touched[1])
+            {
+                deserializer.Read(out context_);
+            }
+        }
+
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            deserializer.Read("Account", out account_);
+            deserializer.Read("Context", out context_);
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(account_);
+            }
+            if (touched[1])
+            {
+                serializer.Write(context_);
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer)
+        {
+            base.Serialize(serializer);
+            serializer.Write("Account", account_);
+            serializer.Write("Context", context_);
+        }
+
+        public override int GetLength()
+        {
+            int length = base.GetLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetLength(account_);
+            }
+            if (touched[1])
+            {
+                length += Serializer.GetLength(context_);
+            }
+            return length;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+            stringBuilder.AppendFormat(" Account=\"{0}\"", account_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Context={0}", context_);
+        }
+
+        private void Initialize()
+        {
+            account_ = "";
+            context_ = 0;
         }
     }
 
@@ -174,6 +548,7 @@ namespace Events.Database
         new public static int TypeId { get { return tag.TypeId; } }
 
         private string account_;
+        private int context_;
         private int result_;
         private string nick_;
         private string password_;
@@ -190,12 +565,22 @@ namespace Events.Database
             }
         }
 
+        public int Context
+        {
+            get { return context_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 1);
+                context_ = value;
+            }
+        }
+
         public int Result
         {
             get { return result_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 1);
+                fingerprint.Touch(tag.Offset + 2);
                 result_ = value;
             }
         }
@@ -205,7 +590,7 @@ namespace Events.Database
             get { return nick_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 2);
+                fingerprint.Touch(tag.Offset + 3);
                 nick_ = value;
             }
         }
@@ -215,7 +600,7 @@ namespace Events.Database
             get { return password_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 3);
+                fingerprint.Touch(tag.Offset + 4);
                 password_ = value;
             }
         }
@@ -225,7 +610,7 @@ namespace Events.Database
             get { return deviceId_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 4);
+                fingerprint.Touch(tag.Offset + 5);
                 deviceId_ = value;
             }
         }
@@ -235,14 +620,14 @@ namespace Events.Database
             get { return gold_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 5);
+                fingerprint.Touch(tag.Offset + 6);
                 gold_ = value;
             }
         }
 
         static EventLoadUserResp()
         {
-            tag = new Tag(Event.tag, typeof(EventLoadUserResp), 6,
+            tag = new Tag(Event.tag, typeof(EventLoadUserResp), 7,
                     (int)EventDatabaseTypes.LoadUserResp);
         }
 
@@ -271,6 +656,10 @@ namespace Events.Database
             }
             EventLoadUserResp o = (EventLoadUserResp)other;
             if (account_ != o.account_)
+            {
+                return false;
+            }
+            if (context_ != o.context_)
             {
                 return false;
             }
@@ -313,26 +702,31 @@ namespace Events.Database
             if (touched[1])
             {
                 hash.Update(tag.Offset + 1);
-                hash.Update(result_);
+                hash.Update(context_);
             }
             if (touched[2])
             {
                 hash.Update(tag.Offset + 2);
-                hash.Update(nick_);
+                hash.Update(result_);
             }
             if (touched[3])
             {
                 hash.Update(tag.Offset + 3);
-                hash.Update(password_);
+                hash.Update(nick_);
             }
             if (touched[4])
             {
                 hash.Update(tag.Offset + 4);
-                hash.Update(deviceId_);
+                hash.Update(password_);
             }
             if (touched[5])
             {
                 hash.Update(tag.Offset + 5);
+                hash.Update(deviceId_);
+            }
+            if (touched[6])
+            {
+                hash.Update(tag.Offset + 6);
                 hash.Update(gold_);
             }
             return hash.Code;
@@ -370,33 +764,40 @@ namespace Events.Database
             }
             if (touched[1])
             {
-                if (result_ != o.result_)
+                if (context_ != o.context_)
                 {
                     return false;
                 }
             }
             if (touched[2])
             {
-                if (nick_ != o.nick_)
+                if (result_ != o.result_)
                 {
                     return false;
                 }
             }
             if (touched[3])
             {
-                if (password_ != o.password_)
+                if (nick_ != o.nick_)
                 {
                     return false;
                 }
             }
             if (touched[4])
             {
-                if (deviceId_ != o.deviceId_)
+                if (password_ != o.password_)
                 {
                     return false;
                 }
             }
             if (touched[5])
+            {
+                if (deviceId_ != o.deviceId_)
+                {
+                    return false;
+                }
+            }
+            if (touched[6])
             {
                 if (gold_ != o.gold_)
                 {
@@ -416,21 +817,25 @@ namespace Events.Database
             }
             if (touched[1])
             {
-                deserializer.Read(out result_);
+                deserializer.Read(out context_);
             }
             if (touched[2])
             {
-                deserializer.Read(out nick_);
+                deserializer.Read(out result_);
             }
             if (touched[3])
             {
-                deserializer.Read(out password_);
+                deserializer.Read(out nick_);
             }
             if (touched[4])
             {
-                deserializer.Read(out deviceId_);
+                deserializer.Read(out password_);
             }
             if (touched[5])
+            {
+                deserializer.Read(out deviceId_);
+            }
+            if (touched[6])
             {
                 deserializer.Read(out gold_);
             }
@@ -440,6 +845,7 @@ namespace Events.Database
         {
             base.Deserialize(deserializer);
             deserializer.Read("Account", out account_);
+            deserializer.Read("Context", out context_);
             deserializer.Read("Result", out result_);
             deserializer.Read("Nick", out nick_);
             deserializer.Read("Password", out password_);
@@ -457,21 +863,25 @@ namespace Events.Database
             }
             if (touched[1])
             {
-                serializer.Write(result_);
+                serializer.Write(context_);
             }
             if (touched[2])
             {
-                serializer.Write(nick_);
+                serializer.Write(result_);
             }
             if (touched[3])
             {
-                serializer.Write(password_);
+                serializer.Write(nick_);
             }
             if (touched[4])
             {
-                serializer.Write(deviceId_);
+                serializer.Write(password_);
             }
             if (touched[5])
+            {
+                serializer.Write(deviceId_);
+            }
+            if (touched[6])
             {
                 serializer.Write(gold_);
             }
@@ -481,6 +891,7 @@ namespace Events.Database
         {
             base.Serialize(serializer);
             serializer.Write("Account", account_);
+            serializer.Write("Context", context_);
             serializer.Write("Result", result_);
             serializer.Write("Nick", nick_);
             serializer.Write("Password", password_);
@@ -498,21 +909,25 @@ namespace Events.Database
             }
             if (touched[1])
             {
-                length += Serializer.GetLength(result_);
+                length += Serializer.GetLength(context_);
             }
             if (touched[2])
             {
-                length += Serializer.GetLength(nick_);
+                length += Serializer.GetLength(result_);
             }
             if (touched[3])
             {
-                length += Serializer.GetLength(password_);
+                length += Serializer.GetLength(nick_);
             }
             if (touched[4])
             {
-                length += Serializer.GetLength(deviceId_);
+                length += Serializer.GetLength(password_);
             }
             if (touched[5])
+            {
+                length += Serializer.GetLength(deviceId_);
+            }
+            if (touched[6])
             {
                 length += Serializer.GetLength(gold_);
             }
@@ -523,6 +938,7 @@ namespace Events.Database
         {
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" Account=\"{0}\"", account_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Context={0}", context_);
             stringBuilder.AppendFormat(" Result={0}", result_);
             stringBuilder.AppendFormat(" Nick=\"{0}\"", nick_.Replace("\"", "\\\""));
             stringBuilder.AppendFormat(" Password=\"{0}\"", password_.Replace("\"", "\\\""));
@@ -533,6 +949,7 @@ namespace Events.Database
         private void Initialize()
         {
             account_ = "";
+            context_ = 0;
             result_ = 0;
             nick_ = "";
             password_ = "";
@@ -548,166 +965,7 @@ namespace Events.Database
         new public static int TypeId { get { return tag.TypeId; } }
 
         private string account_;
-
-        public string Account
-        {
-            get { return account_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 0);
-                account_ = value;
-            }
-        }
-
-        static EventUpdateUserReq()
-        {
-            tag = new Tag(Event.tag, typeof(EventUpdateUserReq), 1,
-                    (int)EventDatabaseTypes.UpdateUserReq);
-        }
-
-        public new static EventUpdateUserReq New()
-        {
-            return new EventUpdateUserReq();
-        }
-
-        public EventUpdateUserReq()
-            : base(tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected EventUpdateUserReq(int length)
-            : base(length + tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected override bool EqualsTo(Cell other)
-        {
-            if (!base.EqualsTo(other))
-            {
-                return false;
-            }
-            EventUpdateUserReq o = (EventUpdateUserReq)other;
-            if (account_ != o.account_)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override int GetHashCode(Fingerprint fingerprint)
-        {
-            var hash = new Hash(base.GetHashCode(fingerprint));
-            if (fingerprint.Length <= tag.Offset)
-            {
-                return hash.Code;
-            }
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                hash.Update(tag.Offset + 0);
-                hash.Update(account_);
-            }
-            return hash.Code;
-        }
-
-        public override int GetTypeId()
-        {
-            return tag.TypeId;
-        }
-
-        public override Cell.Tag GetTypeTag() 
-        {
-            return tag;
-        }
-
-        public override Func<Event> GetFactoryMethod()
-        {
-            return EventUpdateUserReq.New;
-        }
-
-        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
-        {
-            if (!base.IsEquivalent(other, fingerprint))
-            {
-                return false;
-            }
-            EventUpdateUserReq o = (EventUpdateUserReq)other;
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                if (account_ != o.account_)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public override void Deserialize(Deserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                deserializer.Read(out account_);
-            }
-        }
-
-        public override void Deserialize(VerboseDeserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            deserializer.Read("Account", out account_);
-        }
-
-        public override void Serialize(Serializer serializer)
-        {
-            base.Serialize(serializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                serializer.Write(account_);
-            }
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-            serializer.Write("Account", account_);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                length += Serializer.GetLength(account_);
-            }
-            return length;
-        }
-
-        protected override void Describe(StringBuilder stringBuilder)
-        {
-            base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Account=\"{0}\"", account_.Replace("\"", "\\\""));
-        }
-
-        private void Initialize()
-        {
-            account_ = "";
-        }
-    }
-
-    public class EventUpdateUserResp : Event
-    {
-        new protected static readonly Tag tag;
-
-        new public static int TypeId { get { return tag.TypeId; } }
-
-        private string account_;
-        private int result_;
+        private int context_;
         private string nick_;
         private string password_;
         private string deviceId_;
@@ -723,13 +981,13 @@ namespace Events.Database
             }
         }
 
-        public int Result
+        public int Context
         {
-            get { return result_; }
+            get { return context_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 1);
-                result_ = value;
+                context_ = value;
             }
         }
 
@@ -773,24 +1031,24 @@ namespace Events.Database
             }
         }
 
-        static EventUpdateUserResp()
+        static EventUpdateUserReq()
         {
-            tag = new Tag(Event.tag, typeof(EventUpdateUserResp), 6,
-                    (int)EventDatabaseTypes.UpdateUserResp);
+            tag = new Tag(Event.tag, typeof(EventUpdateUserReq), 6,
+                    (int)EventDatabaseTypes.UpdateUserReq);
         }
 
-        public new static EventUpdateUserResp New()
+        public new static EventUpdateUserReq New()
         {
-            return new EventUpdateUserResp();
+            return new EventUpdateUserReq();
         }
 
-        public EventUpdateUserResp()
+        public EventUpdateUserReq()
             : base(tag.NumProps)
         {
             Initialize();
         }
 
-        protected EventUpdateUserResp(int length)
+        protected EventUpdateUserReq(int length)
             : base(length + tag.NumProps)
         {
             Initialize();
@@ -802,12 +1060,12 @@ namespace Events.Database
             {
                 return false;
             }
-            EventUpdateUserResp o = (EventUpdateUserResp)other;
+            EventUpdateUserReq o = (EventUpdateUserReq)other;
             if (account_ != o.account_)
             {
                 return false;
             }
-            if (result_ != o.result_)
+            if (context_ != o.context_)
             {
                 return false;
             }
@@ -846,7 +1104,7 @@ namespace Events.Database
             if (touched[1])
             {
                 hash.Update(tag.Offset + 1);
-                hash.Update(result_);
+                hash.Update(context_);
             }
             if (touched[2])
             {
@@ -883,7 +1141,7 @@ namespace Events.Database
 
         public override Func<Event> GetFactoryMethod()
         {
-            return EventUpdateUserResp.New;
+            return EventUpdateUserReq.New;
         }
 
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
@@ -892,7 +1150,7 @@ namespace Events.Database
             {
                 return false;
             }
-            EventUpdateUserResp o = (EventUpdateUserResp)other;
+            EventUpdateUserReq o = (EventUpdateUserReq)other;
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
@@ -903,7 +1161,7 @@ namespace Events.Database
             }
             if (touched[1])
             {
-                if (result_ != o.result_)
+                if (context_ != o.context_)
                 {
                     return false;
                 }
@@ -949,7 +1207,7 @@ namespace Events.Database
             }
             if (touched[1])
             {
-                deserializer.Read(out result_);
+                deserializer.Read(out context_);
             }
             if (touched[2])
             {
@@ -973,7 +1231,7 @@ namespace Events.Database
         {
             base.Deserialize(deserializer);
             deserializer.Read("Account", out account_);
-            deserializer.Read("Result", out result_);
+            deserializer.Read("Context", out context_);
             deserializer.Read("Nick", out nick_);
             deserializer.Read("Password", out password_);
             deserializer.Read("DeviceId", out deviceId_);
@@ -990,7 +1248,7 @@ namespace Events.Database
             }
             if (touched[1])
             {
-                serializer.Write(result_);
+                serializer.Write(context_);
             }
             if (touched[2])
             {
@@ -1014,7 +1272,7 @@ namespace Events.Database
         {
             base.Serialize(serializer);
             serializer.Write("Account", account_);
-            serializer.Write("Result", result_);
+            serializer.Write("Context", context_);
             serializer.Write("Nick", nick_);
             serializer.Write("Password", password_);
             serializer.Write("DeviceId", deviceId_);
@@ -1031,7 +1289,7 @@ namespace Events.Database
             }
             if (touched[1])
             {
-                length += Serializer.GetLength(result_);
+                length += Serializer.GetLength(context_);
             }
             if (touched[2])
             {
@@ -1056,6 +1314,422 @@ namespace Events.Database
         {
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" Account=\"{0}\"", account_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Context={0}", context_);
+            stringBuilder.AppendFormat(" Nick=\"{0}\"", nick_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Password=\"{0}\"", password_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" DeviceId=\"{0}\"", deviceId_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Gold={0}", gold_);
+        }
+
+        private void Initialize()
+        {
+            account_ = "";
+            context_ = 0;
+            nick_ = "";
+            password_ = "";
+            deviceId_ = "";
+            gold_ = 0;
+        }
+    }
+
+    public class EventUpdateUserResp : Event
+    {
+        new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
+
+        private string account_;
+        private int context_;
+        private int result_;
+        private string nick_;
+        private string password_;
+        private string deviceId_;
+        private int gold_;
+
+        public string Account
+        {
+            get { return account_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                account_ = value;
+            }
+        }
+
+        public int Context
+        {
+            get { return context_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 1);
+                context_ = value;
+            }
+        }
+
+        public int Result
+        {
+            get { return result_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 2);
+                result_ = value;
+            }
+        }
+
+        public string Nick
+        {
+            get { return nick_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 3);
+                nick_ = value;
+            }
+        }
+
+        public string Password
+        {
+            get { return password_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 4);
+                password_ = value;
+            }
+        }
+
+        public string DeviceId
+        {
+            get { return deviceId_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 5);
+                deviceId_ = value;
+            }
+        }
+
+        public int Gold
+        {
+            get { return gold_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 6);
+                gold_ = value;
+            }
+        }
+
+        static EventUpdateUserResp()
+        {
+            tag = new Tag(Event.tag, typeof(EventUpdateUserResp), 7,
+                    (int)EventDatabaseTypes.UpdateUserResp);
+        }
+
+        public new static EventUpdateUserResp New()
+        {
+            return new EventUpdateUserResp();
+        }
+
+        public EventUpdateUserResp()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected EventUpdateUserResp(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            EventUpdateUserResp o = (EventUpdateUserResp)other;
+            if (account_ != o.account_)
+            {
+                return false;
+            }
+            if (context_ != o.context_)
+            {
+                return false;
+            }
+            if (result_ != o.result_)
+            {
+                return false;
+            }
+            if (nick_ != o.nick_)
+            {
+                return false;
+            }
+            if (password_ != o.password_)
+            {
+                return false;
+            }
+            if (deviceId_ != o.deviceId_)
+            {
+                return false;
+            }
+            if (gold_ != o.gold_)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(tag.Offset + 0);
+                hash.Update(account_);
+            }
+            if (touched[1])
+            {
+                hash.Update(tag.Offset + 1);
+                hash.Update(context_);
+            }
+            if (touched[2])
+            {
+                hash.Update(tag.Offset + 2);
+                hash.Update(result_);
+            }
+            if (touched[3])
+            {
+                hash.Update(tag.Offset + 3);
+                hash.Update(nick_);
+            }
+            if (touched[4])
+            {
+                hash.Update(tag.Offset + 4);
+                hash.Update(password_);
+            }
+            if (touched[5])
+            {
+                hash.Update(tag.Offset + 5);
+                hash.Update(deviceId_);
+            }
+            if (touched[6])
+            {
+                hash.Update(tag.Offset + 6);
+                hash.Update(gold_);
+            }
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return EventUpdateUserResp.New;
+        }
+
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        {
+            if (!base.IsEquivalent(other, fingerprint))
+            {
+                return false;
+            }
+            EventUpdateUserResp o = (EventUpdateUserResp)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (account_ != o.account_)
+                {
+                    return false;
+                }
+            }
+            if (touched[1])
+            {
+                if (context_ != o.context_)
+                {
+                    return false;
+                }
+            }
+            if (touched[2])
+            {
+                if (result_ != o.result_)
+                {
+                    return false;
+                }
+            }
+            if (touched[3])
+            {
+                if (nick_ != o.nick_)
+                {
+                    return false;
+                }
+            }
+            if (touched[4])
+            {
+                if (password_ != o.password_)
+                {
+                    return false;
+                }
+            }
+            if (touched[5])
+            {
+                if (deviceId_ != o.deviceId_)
+                {
+                    return false;
+                }
+            }
+            if (touched[6])
+            {
+                if (gold_ != o.gold_)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override void Deserialize(Deserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                deserializer.Read(out account_);
+            }
+            if (touched[1])
+            {
+                deserializer.Read(out context_);
+            }
+            if (touched[2])
+            {
+                deserializer.Read(out result_);
+            }
+            if (touched[3])
+            {
+                deserializer.Read(out nick_);
+            }
+            if (touched[4])
+            {
+                deserializer.Read(out password_);
+            }
+            if (touched[5])
+            {
+                deserializer.Read(out deviceId_);
+            }
+            if (touched[6])
+            {
+                deserializer.Read(out gold_);
+            }
+        }
+
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            deserializer.Read("Account", out account_);
+            deserializer.Read("Context", out context_);
+            deserializer.Read("Result", out result_);
+            deserializer.Read("Nick", out nick_);
+            deserializer.Read("Password", out password_);
+            deserializer.Read("DeviceId", out deviceId_);
+            deserializer.Read("Gold", out gold_);
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(account_);
+            }
+            if (touched[1])
+            {
+                serializer.Write(context_);
+            }
+            if (touched[2])
+            {
+                serializer.Write(result_);
+            }
+            if (touched[3])
+            {
+                serializer.Write(nick_);
+            }
+            if (touched[4])
+            {
+                serializer.Write(password_);
+            }
+            if (touched[5])
+            {
+                serializer.Write(deviceId_);
+            }
+            if (touched[6])
+            {
+                serializer.Write(gold_);
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer)
+        {
+            base.Serialize(serializer);
+            serializer.Write("Account", account_);
+            serializer.Write("Context", context_);
+            serializer.Write("Result", result_);
+            serializer.Write("Nick", nick_);
+            serializer.Write("Password", password_);
+            serializer.Write("DeviceId", deviceId_);
+            serializer.Write("Gold", gold_);
+        }
+
+        public override int GetLength()
+        {
+            int length = base.GetLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetLength(account_);
+            }
+            if (touched[1])
+            {
+                length += Serializer.GetLength(context_);
+            }
+            if (touched[2])
+            {
+                length += Serializer.GetLength(result_);
+            }
+            if (touched[3])
+            {
+                length += Serializer.GetLength(nick_);
+            }
+            if (touched[4])
+            {
+                length += Serializer.GetLength(password_);
+            }
+            if (touched[5])
+            {
+                length += Serializer.GetLength(deviceId_);
+            }
+            if (touched[6])
+            {
+                length += Serializer.GetLength(gold_);
+            }
+            return length;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+            stringBuilder.AppendFormat(" Account=\"{0}\"", account_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Context={0}", context_);
             stringBuilder.AppendFormat(" Result={0}", result_);
             stringBuilder.AppendFormat(" Nick=\"{0}\"", nick_.Replace("\"", "\\\""));
             stringBuilder.AppendFormat(" Password=\"{0}\"", password_.Replace("\"", "\\\""));
@@ -1066,6 +1740,7 @@ namespace Events.Database
         private void Initialize()
         {
             account_ = "";
+            context_ = 0;
             result_ = 0;
             nick_ = "";
             password_ = "";

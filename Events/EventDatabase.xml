@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <x2 namespace="Events.Database">
 
- <event name="EventCreateOrLoadUserReq" id="EventDatabaseTypes.CreateOrLoadUser">
+ <event name="EventCreateOrLoadUserReq" id="EventDatabaseTypes.CreateOrLoadUserReq">
+    <property name="Account"      type="string"/>
+    <property name="Password"     type="string"/>
+    <property name="Nick"         type="string"/>
+    <property name="DeviceId"     type="string"/>
+    <property name="Context"      type="int32"/>
+ </event>
+
+ <event name="EventLoadUserReq" id="EventDatabaseTypes.LoadUserReq">
     <property name="Account"      type="string"/>
     <property name="Context"      type="int32"/>
  </event>
@@ -18,7 +26,11 @@
 
  <event name="EventUpdateUserReq" id="EventDatabaseTypes.UpdateUserReq">
     <property name="Account"      type="string"/>
-    <property name="Context"   type="int32"/>
+    <property name="Context"      type="int32"/>
+    <property name="Nick"         type="string"/>
+    <property name="Password"     type="string"/>
+    <property name="DeviceId"     type="string"/>
+    <property name="Gold"         type="int32"/>
  </event>
 
  <event name="EventUpdateUserResp" id="EventDatabaseTypes.UpdateUserResp">

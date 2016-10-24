@@ -30,6 +30,8 @@ namespace Server.Session
         {
             base.Setup();
 
+            rand = new Random();
+
             new Events.Login.EventLoginReq()
                 .Bind(OnLoginReq);
 
@@ -59,14 +61,19 @@ namespace Server.Session
             var index = rand.Next(userCaseHolders.Count);
             var holder = userCaseHolders[index];
 
-            var uc = new UserCase(resp.Account, resp.Guid);
+            var uc = new UserCase(
+                new Shared.User
+                {
+                    Account = resp.Account
+                }
+            );
+
             holder.Add(uc);
             uc.Setup(holder);
 
             new Events.Login.EventLoginResp
             {
                 Account = resp.Account,
-                Guid = resp.Guid,
                 Result = resp.Result
             }
             .Post();

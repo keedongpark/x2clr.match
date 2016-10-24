@@ -19,7 +19,14 @@
  - EventDbLoadUserReq / Resp 
    - Account와 Context에 바인딩해서 처리 
  - EventDbUpdateUserReq / Resp
-   - 
+
+## ClusterHelper 
+
+ - [자료](http://developer.couchbase.com/documentation/server/4.0/sdks/dotnet-2.2/cluster-helper.html)
+
+ 연결 처리 등을 내부적으로 해줌. 소스를 볼 수 있으니 참고하면 됨. 
+
+ 
 
 ## Example 
 

@@ -8,8 +8,25 @@ namespace Events
 {
     public enum ErrorCodes
     {
-        LoginBegin = 1000, 
-        LobbyBegin = 2000, 
-        GameBegin = 3000
+        Success = 0,
+
+        LoginBegin = 0,
+        FailLogin, 
+        FailLogin_UserNotExist,
+        FailLogin_DuplicateLogin,
+        FailLogin_PasswordIncorrect,
+        LoginEnd,
+
+        DbBegin = LoginBegin + 1000,
+        FailDb_Op,                          /* General database error */
+        FailDb_NotExist,                    /* Requested key not exist */
+        DbEnd,
+
+        InstanceBegin = DbBegin + 1000,
+        InstanceEnd,
+
+
+        GameBegin = InstanceBegin + 1000, 
+        GameEnd,
     }
 }

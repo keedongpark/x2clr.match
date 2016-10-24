@@ -59,7 +59,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChannelNames.cs" />
     <Compile Include="Client\ClientCase.cs" />
     <Compile Include="Core\Action\ActionNode.cs" />
     <Compile Include="Core\Action\ActionBuilder.cs" />
@@ -71,7 +70,7 @@
     <Compile Include="Core\Action\SequenceNode.cs" />
     <Compile Include="Core\Action\TimeData.cs" />
     <Compile Include="Couchbase\Query.cs" />
-    <Compile Include="Couchbase\QueryRunner.cs" />
+    <Compile Include="Couchbase\UserDatabaseCase.cs" />
     <Compile Include="Game\Config.cs" />
     <Compile Include="Game\GameNetServer.cs" />
     <Compile Include="Game\Instance.cs" />
@@ -92,6 +91,7 @@
     <Compile Include="Session\MasterClient.cs" />
     <Compile Include="Session\SessionNetServer.cs" />
     <Compile Include="Session\UserCase.cs" />
+    <Compile Include="Shared\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -108,9 +108,7 @@
       <Name>x2clr.net40</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Shared\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

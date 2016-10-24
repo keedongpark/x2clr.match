@@ -14,12 +14,6 @@ namespace Server.Client
     {
         string account;
         string password;
-        int guid;
-
-        public int Guid
-        {
-            get { return guid; }
-        }
 
         public bool HasLogin
         {
@@ -30,7 +24,6 @@ namespace Server.Client
         {
             this.account = account;
             this.password = password;
-            this.guid = 0;
 
             new Events.Login.EventLoginReq
             {
@@ -58,11 +51,9 @@ namespace Server.Client
 
         void OnLoginResp(Events.Login.EventLoginResp resp)
         {
-            if ( resp.Result == (int)Events.ErrorLogin.Success)
+            if ( resp.Result == (int)Events.ErrorCodes.Success)
             {
                 HasLogin = true;
-
-                this.guid = resp.Guid;
             }
             else
             {

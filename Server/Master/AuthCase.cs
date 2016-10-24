@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using x2;
 using Events;
 using Events.Login;
+using Events.Database;
 
 namespace Server.Master
 {
@@ -14,14 +15,23 @@ namespace Server.Master
     /// </summary>
     public class AuthCase : Case
     {
-        Dictionary<string, Shared.User> dic;
+        class Entry
+        {
+            public enum State
+            {
+                LoginPending,       // Pending db request
+                Login,              // Login success 
+            };
 
-        int guid_seq; // temporal 
+            public State state;
+            public Shared.User user;
+        }
 
+        Dictionary<string, Entry> dic;
 
         public AuthCase()
         {
-            dic = new Dictionary<string, Shared.User>();
+            dic = new Dictionary<string, Entry>();
         }
 
         protected override void Setup()
@@ -30,38 +40,123 @@ namespace Server.Master
 
             new EventMasterLoginReq().Bind(OnLoginReq);
             new EventMasterLogout().Bind(OnLogout);
+            new EventLoadUserResp
+            {
+                Context = (int)EventDatabaseContext.Auth
+            }
+            .Bind(OnUserLoaded);
         }
 
         void OnLoginReq(EventMasterLoginReq req)
         {
-            // Skip DB processing for now
+            Entry entry;
 
-            Shared.User user;
-
-            if ( !dic.TryGetValue(req.Account, out user) )
+            if ( dic.TryGetValue(req.Account, out entry) )
             {
-                user = new Shared.User();
+                // TODO: Kickout 
+
+                dic.Remove(req.Account);
+            }
+
+            dic[req.Account] = new Entry
+            {
+                state = Entry.State.LoginPending,
+                user = new Shared.User
+                {
+                    Account = req.Account,
+                    Password = req.Password
+                }
+            };
+
+            new EventCreateOrLoadUserReq
+            {
+                Account = req.Account,
+                Password = req.Password,
+                Context = (int)EventDatabaseContext.Auth
+            }.Post();
+        }
+
+        void OnUserLoaded(EventLoadUserResp resp)
+        {
+            Entry entry;
+
+            if (!dic.TryGetValue(resp.Account, out entry))
+            {
+                Log.Emit(
+                   LogLevel.Error,
+                   string.Format(
+                       "Login> [Account: {0}][Error: User not found from dic]",
+                       resp.Account
+                   )
+                );
+                return;
+            }
+
+            var user = new Shared.User
+            {
+                Account = resp.Account,
+                Password = resp.Password,
+                Nick = resp.Nick,
+                DeviceId = resp.DeviceId,
+                Gold = resp.Gold,
+            };
+
+            int result = resp.Result; 
+
+            if (resp.Result == 0)
+            {
+                if (user.Password == entry.user.Password)
+                {
+                    dic[user.Account].state = Entry.State.Login;
+                }
+                else
+                {
+                    result = (int)ErrorCodes.FailLogin_PasswordIncorrect;
+                }
+            }
+
+            if ( result != 0)
+            {
+                dic.Remove(user.Account);
+
+                Log.Emit(
+                    LogLevel.Error, 
+                    string.Format(
+                        "Login> [Account: {0}][Error: {1}]", 
+                        user.Account, result
+                    )
+                );
             }
             else
             {
-                // 
+                Log.Emit(
+                    LogLevel.Info, 
+                    string.Format(
+                        "Login> [Account: {0}]",
+                        user.Account
+                    )
+                );
             }
-
-            user.Account = req.Account;
-
-            dic[user.Account] = user;
 
             new EventMasterLoginResp
             {
                 Account = user.Account,
-                Result = 0
+                Result = result
             }
             .Post();
-        }
+        } 
 
         void OnLogout(EventMasterLogout req)
         {
             dic.Remove(req.Account);
+
+            Log.Emit(
+                  LogLevel.Info,
+                  string.Format(
+                      "Logout> [Account: {0}]",
+                      req.Account
+                  )
+            );
         }
     }
 }
