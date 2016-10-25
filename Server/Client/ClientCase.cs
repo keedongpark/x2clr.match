@@ -15,9 +15,23 @@ namespace Server.Client
         string account;
         string password;
 
+        int serverId;
+        int instanceId;
+        List<Events.Instance.Member> members;
+
         public bool HasLogin
         {
-            get; set;
+            get; private set;
+        }
+
+        public bool IsMatched
+        {
+            get; private set;
+        }
+
+        public List<Events.Instance.Member> Members
+        {
+            get { return members; }
         }
 
         public ClientCase(string account, string password)
@@ -47,7 +61,14 @@ namespace Server.Client
         {
             new Events.Instance.EventMatchReq
             {
-
+                Zone = 1, 
+                Requester = new Events.Instance.Member
+                {
+                    Account = account, 
+                    Nick = "", 
+                    Gold = 100000,
+                    Bot = false
+                }
             }
             .Post();
         }
@@ -59,6 +80,9 @@ namespace Server.Client
 
             new Events.Login.EventLoginResp()
                 .Bind(OnLoginResp);
+
+            new Events.Instance.EventMatchResp()
+                .Bind(OnMatchResp);
         }
 
         void OnLoginResp(Events.Login.EventLoginResp resp)
@@ -70,6 +94,22 @@ namespace Server.Client
             else
             {
                 HasLogin = false;
+            }
+        }
+
+        void OnMatchResp(Events.Instance.EventMatchResp resp)
+        {
+            if ( resp.Result == (int)Events.ErrorCodes.Success)
+            {
+                IsMatched = true;
+
+                serverId = resp.ServerId;
+                instanceId = resp.InstanceId;
+                members = resp.Members;
+            }
+            else
+            {
+                IsMatched = false;
             }
         }
     }

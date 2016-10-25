@@ -12,28 +12,32 @@ namespace Server.Master
     /// Manages instance and matching. Join and leave from instance.
     /// 
     /// Matching Rule: 
-    ///  
+    ///  - 큐에서 둘을 뽑아서 매칭해서 돌려준다. 
+    ///  - 일정 시간 이상 대기하면 봇과 매칭한다. 
+    ///  - 게임이 끝나면 다시 매칭한다. 
     /// </summary>
     public class MatchCase : Case
     {
 
-        class MatchingEntry
+        class Entry 
         {
-            public class Member
-            {
-                public string Account;
-                public bool Waiting;
-            }
-
-            public List<Member> Members = new List<Member>();
-            public Events.InstanceStatus Status;
+            public Member member;
+            public DateTime time;
         }
 
-        Queue<MatchingEntry> matchQueue;
+        class Coord
+        {
+            public int serverId;
+            public int count;
+        }
+
+        Queue<Entry> matchQueue;
+        List<Coord> coords;
 
         public MatchCase()
         {
-            matchQueue = new Queue<MatchingEntry>();
+            matchQueue = new Queue<Entry>();
+            coords = new List<Coord>();
         }
 
         public int Zone { get; private set; }
@@ -52,17 +56,22 @@ namespace Server.Master
 
         void OnMatchReq(EventMatchReq req)
         {
-            if ( matchQueue.Count > 0)
-            {
-                // Push a human player to the instance replacing the bot when a game restarts.
+            // TODO: 사용자별 고유한 요청이 보장되어야 함
 
-            }
-            else
-            {
-                // Create a new instance with a bot player
+            matchQueue.Enqueue(
+                new Entry
+                {
+                    member = req.Requester,
+                    time = DateTime.Now
+                }
+            );
 
-                // Push the instance into the matchQueue
-            }
+            Match();
+        }
+
+        void Match()
+        {
+
         }
     }
 }

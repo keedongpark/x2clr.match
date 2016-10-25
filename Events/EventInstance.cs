@@ -2212,4 +2212,206 @@ namespace Events.Instance
             members_ = null;
         }
     }
+
+    public class EventCoordStatus : Event
+    {
+        new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
+
+        private int serverId_;
+        private int count_;
+
+        public int ServerId
+        {
+            get { return serverId_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                serverId_ = value;
+            }
+        }
+
+        public int Count
+        {
+            get { return count_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 1);
+                count_ = value;
+            }
+        }
+
+        static EventCoordStatus()
+        {
+            tag = new Tag(Event.tag, typeof(EventCoordStatus), 2,
+                    (int)EventInstanceTypes.CoordStatus);
+        }
+
+        public new static EventCoordStatus New()
+        {
+            return new EventCoordStatus();
+        }
+
+        public EventCoordStatus()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected EventCoordStatus(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            EventCoordStatus o = (EventCoordStatus)other;
+            if (serverId_ != o.serverId_)
+            {
+                return false;
+            }
+            if (count_ != o.count_)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(tag.Offset + 0);
+                hash.Update(serverId_);
+            }
+            if (touched[1])
+            {
+                hash.Update(tag.Offset + 1);
+                hash.Update(count_);
+            }
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return EventCoordStatus.New;
+        }
+
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        {
+            if (!base.IsEquivalent(other, fingerprint))
+            {
+                return false;
+            }
+            EventCoordStatus o = (EventCoordStatus)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (serverId_ != o.serverId_)
+                {
+                    return false;
+                }
+            }
+            if (touched[1])
+            {
+                if (count_ != o.count_)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override void Deserialize(Deserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                deserializer.Read(out serverId_);
+            }
+            if (touched[1])
+            {
+                deserializer.Read(out count_);
+            }
+        }
+
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            deserializer.Read("ServerId", out serverId_);
+            deserializer.Read("Count", out count_);
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(serverId_);
+            }
+            if (touched[1])
+            {
+                serializer.Write(count_);
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer)
+        {
+            base.Serialize(serializer);
+            serializer.Write("ServerId", serverId_);
+            serializer.Write("Count", count_);
+        }
+
+        public override int GetLength()
+        {
+            int length = base.GetLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetLength(serverId_);
+            }
+            if (touched[1])
+            {
+                length += Serializer.GetLength(count_);
+            }
+            return length;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+            stringBuilder.AppendFormat(" ServerId={0}", serverId_);
+            stringBuilder.AppendFormat(" Count={0}", count_);
+        }
+
+        private void Initialize()
+        {
+            serverId_ = 0;
+            count_ = 0;
+        }
+    }
 }

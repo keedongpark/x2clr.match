@@ -21,6 +21,7 @@ namespace Events.Instance
         LeaveReq, 
         LeaveResp,
         Status, 
-        DestroySelf
+        DestroySelf, 
+        CoordStatus
     }
 }

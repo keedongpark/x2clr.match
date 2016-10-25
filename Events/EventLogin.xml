@@ -28,4 +28,5 @@
   <event name="EventMasterLogout" id="EventLoginTypes.MasterLogout">
     <property name="Account"   type="string"/>
   </event>
+
 </x2>

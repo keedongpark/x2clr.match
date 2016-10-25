@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<x2 namespace="Events.Cluster"> <!-- id : 1001 ~ 2000 -->
+<x2 namespace="Events.Cluster">
+  <!-- id : 1001 ~ 2000 -->
   <cell name ="ServerStatus">
     <property name="Id"   type="int32"/>
     <property name="Role" type="int32"/>

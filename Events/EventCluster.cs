@@ -13,7 +13,7 @@ namespace Events.Cluster
     /// </summary>
     public class ServerStatus : Cell
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
         private int id_;
         private int role_;
@@ -326,9 +326,9 @@ namespace Events.Cluster
 
     public class EventServerList : Event
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
-        public new static int TypeId { get { return tag.TypeId; } }
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private List<ServerStatus> servers_;
 
@@ -485,9 +485,9 @@ namespace Events.Cluster
 
     public class EventJoin : Event
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
-        public new static int TypeId { get { return tag.TypeId; } }
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private int id_;
         private int role_;
@@ -773,9 +773,9 @@ namespace Events.Cluster
 
     public class EventLeave : Event
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
-        public new static int TypeId { get { return tag.TypeId; } }
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private int id_;
 

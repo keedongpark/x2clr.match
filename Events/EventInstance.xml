@@ -55,4 +55,9 @@
     <property name="Members"            type="list(Member)"/>
   </event>
 
+  <event name="EventCoordStatus" id="EventInstanceTypes.CoordStatus">
+    <property name="ServerId"           type="int32"/>
+    <property name="Count"              type="int32"/>
+  </event>
+
 </x2>

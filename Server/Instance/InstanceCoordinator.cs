@@ -13,12 +13,15 @@ namespace Server.Instance
     /// </summary>
     public class InstanceCoordinator : Case
     {
+        int serverId;
         List<Flow> flows;
         RangedIntPool idPool;
         Random rand;
+        int instanceCount;
 
-        public InstanceCoordinator(List<Flow> flows)
+        public InstanceCoordinator(int serverId, List<Flow> flows)
         {
+            this.serverId = serverId;
             this.flows = new List<Flow>();
             this.flows.AddRange(flows);
 
@@ -37,8 +40,9 @@ namespace Server.Instance
             }
             .Bind(OnJoinReq);
 
-            new EventStatus()
-                .Bind(OnStatus);
+            new EventStatus().Bind(OnStatus);
+
+            PostState();
         }
 
         void OnJoinReq(EventJoinReq req)
@@ -59,6 +63,10 @@ namespace Server.Instance
 
             req.InstanceId = id;
             req.Post();
+
+            instanceCount++;
+
+            PostState();
         }
 
         void OnStatus(EventStatus ntf)
@@ -66,7 +74,21 @@ namespace Server.Instance
             if ( ntf.Status == (int)Events.InstanceStatus.Destroyed)
             {
                 idPool.Release(ntf.InstanceId);
+
+                instanceCount--;
+
+                PostState();
             }
+        }
+
+        void PostState()
+        {
+            new EventCoordStatus
+            {
+                ServerId = serverId, 
+                Count = instanceCount
+            }
+            .Post();
         }
     }
 }
