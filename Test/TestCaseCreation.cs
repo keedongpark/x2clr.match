@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using NUnit.Framework;
 using x2;
 
@@ -40,8 +40,42 @@ namespace Test
             Hub.Shutdown();
         }
 
+        [Test]
+        public void TestCaseSuicide()
+        {
+            var f1 = new ConcurrentThreadFlow();
+            var f2 = new ConcurrentThreadFlow();
+
+            Hub.Instance
+                .Attach(f1)
+                .Attach(f2);
+
+            // Case.Setup has a holder argument.
+
+            Hub.Startup();
+
+            var c1 = new TestCase();
+
+            f1.Add(c1);
+            c1.Setup(f1);
+
+            Assert.IsTrue(Object.ReferenceEquals(f1, c1.Flow));
+
+            c1.Suicide();
+
+            Thread.Sleep(100);
+
+            Hub.Shutdown();
+        }
+
         class TestCase : Case
         {
+
+            public void Suicide()
+            {
+                Flow.Remove(this);
+                Teardown(Flow);
+            }
 
             protected override void Setup()
             {

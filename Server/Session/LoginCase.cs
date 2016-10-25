@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using x2;
+using Events.Login;
 
 namespace Server.Session
 {
@@ -32,16 +33,16 @@ namespace Server.Session
 
             rand = new Random();
 
-            new Events.Login.EventLoginReq()
+            new EventLoginReq()
                 .Bind(OnLoginReq);
 
-            new Events.Login.EventMasterLoginResp()
+            new EventMasterLoginResp()
                 .Bind(OnLoginResp);
         }
 
-        void OnLoginReq(Events.Login.EventLoginReq req)
+        void OnLoginReq(EventLoginReq req)
         {
-            new Events.Login.EventMasterLoginReq
+            new EventMasterLoginReq
             {
                 Account = req.Account,
                 Password = req.Password
@@ -49,7 +50,7 @@ namespace Server.Session
             .Post();
         }
 
-        void OnLoginResp(Events.Login.EventMasterLoginResp resp)
+        void OnLoginResp(EventMasterLoginResp resp)
         {
             if ( userCaseHolders == null || userCaseHolders.Count == 0)
             {
@@ -71,7 +72,7 @@ namespace Server.Session
             holder.Add(uc);
             uc.Setup(holder);
 
-            new Events.Login.EventLoginResp
+            new EventLoginResp
             {
                 Account = resp.Account,
                 Result = resp.Result

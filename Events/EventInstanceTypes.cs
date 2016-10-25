@@ -21,6 +21,6 @@ namespace Events.Instance
         LeaveReq, 
         LeaveResp,
         Status, 
-        RunnerStatus
+        DestroySelf
     }
 }

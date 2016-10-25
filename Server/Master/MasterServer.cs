@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
+﻿using System.Reflection;
 using x2;
 
-namespace Server.Session
+namespace Server.Master
 {
-    /// <summary>
-    /// Listen
-    /// </summary>
-    public class SessionNetServer : AsyncTcpServer
+    public class MasterServer : AsyncTcpServer
     {
-        Config config;
-
-        public SessionNetServer(Config cfg)
+        Config config; 
+        public MasterServer(Config cfg)
             : base(cfg.Name)
         {
             config = cfg;
@@ -35,9 +26,10 @@ namespace Server.Session
         {
             EventFactory.Register(Assembly.Load(config.EventAssembly));
         }
-
+        
         void InitializeBinds()
         {
+            // Send or Multicast when received
             new Event().Bind(Send);
         }
     }

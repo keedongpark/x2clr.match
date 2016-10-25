@@ -12,27 +12,12 @@ namespace Server.Master
     /// Manages instance and matching. Join and leave from instance.
     /// 
     /// Matching Rule: 
-    ///   - Supposing a two player board game. 
-    ///   - Matches instantly with a Bot and matching is finished. Join process continues.
-    ///   - Put the instance in candidateQueue 
-    ///   - When a new match request arrives, use candidateQueue to match to the human player. 
-    ///   - The new joined player is in waiting list watching the game with a bot.
-    ///   - When a human player leaves, 
+    ///  
     /// </summary>
     public class MatchCase : Case
     {
-        /// <summary>
-        /// InstanRunner Entry to select from
-        /// </summary>
-        class InstanceRunnerEntry
-        {
-            public int ServerId;
-            public int RunnerId;
-            public int InstanceCount;
-            public bool Up;
-        }
 
-        class InstanceEntry
+        class MatchingEntry
         {
             public class Member
             {
@@ -40,19 +25,15 @@ namespace Server.Master
                 public bool Waiting;
             }
 
-            public int Id;
             public List<Member> Members = new List<Member>();
             public Events.InstanceStatus Status;
         }
 
-        List<InstanceRunnerEntry> runners;
-        Dictionary<int, InstanceEntry> instances;
-        Queue<InstanceEntry> matchQueue;
+        Queue<MatchingEntry> matchQueue;
 
         public MatchCase()
         {
-            instances = new Dictionary<int, InstanceEntry>();
-            matchQueue = new Queue<InstanceEntry>();
+            matchQueue = new Queue<MatchingEntry>();
         }
 
         public int Zone { get; private set; }

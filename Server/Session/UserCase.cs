@@ -23,7 +23,6 @@ namespace Server.Session
             // Match Request 
 
             // Match Response 
-
         }
     }
 }

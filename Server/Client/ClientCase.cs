@@ -20,11 +20,14 @@ namespace Server.Client
             get; set;
         }
 
-        public void RequestLogin(string account, string password)
+        public ClientCase(string account, string password)
         {
             this.account = account;
             this.password = password;
+        }
 
+        public void RequestLogin()
+        {
             new Events.Login.EventLoginReq
             {
                 Account = account,
@@ -38,6 +41,15 @@ namespace Server.Client
             {
                 Account = account
             }.Post();
+        }
+
+        public void RequestMatch()
+        {
+            new Events.Instance.EventMatchReq
+            {
+
+            }
+            .Post();
         }
 
 

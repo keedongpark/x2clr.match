@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using x2;
 
-namespace Server.Game
+namespace Server.Instance
 {
     /// <summary>
     /// 

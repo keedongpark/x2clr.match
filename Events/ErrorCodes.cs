@@ -23,6 +23,7 @@ namespace Events
         DbEnd,
 
         InstanceBegin = DbBegin + 1000,
+        FailInstance_MemberNotFound,
         InstanceEnd,
 
 

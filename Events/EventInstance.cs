@@ -10,11 +10,10 @@ namespace Events.Instance
 {
     public class Member : Cell
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
         private string account_;
         private string nick_;
-        private int guid_;
         private long gold_;
         private bool bot_;
 
@@ -38,22 +37,12 @@ namespace Events.Instance
             }
         }
 
-        public int Guid
-        {
-            get { return guid_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 2);
-                guid_ = value;
-            }
-        }
-
         public long Gold
         {
             get { return gold_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 3);
+                fingerprint.Touch(tag.Offset + 2);
                 gold_ = value;
             }
         }
@@ -63,14 +52,14 @@ namespace Events.Instance
             get { return bot_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 4);
+                fingerprint.Touch(tag.Offset + 3);
                 bot_ = value;
             }
         }
 
         static Member()
         {
-            tag = new Tag(null, typeof(Member), 5);
+            tag = new Tag(null, typeof(Member), 4);
         }
 
         public Member()
@@ -97,10 +86,6 @@ namespace Events.Instance
                 return false;
             }
             if (nick_ != o.nick_)
-            {
-                return false;
-            }
-            if (guid_ != o.guid_)
             {
                 return false;
             }
@@ -136,16 +121,11 @@ namespace Events.Instance
             if (touched[2])
             {
                 hash.Update(tag.Offset + 2);
-                hash.Update(guid_);
+                hash.Update(gold_);
             }
             if (touched[3])
             {
                 hash.Update(tag.Offset + 3);
-                hash.Update(gold_);
-            }
-            if (touched[4])
-            {
-                hash.Update(tag.Offset + 4);
                 hash.Update(bot_);
             }
             return hash.Code;
@@ -180,19 +160,12 @@ namespace Events.Instance
             }
             if (touched[2])
             {
-                if (guid_ != o.guid_)
-                {
-                    return false;
-                }
-            }
-            if (touched[3])
-            {
                 if (gold_ != o.gold_)
                 {
                     return false;
                 }
             }
-            if (touched[4])
+            if (touched[3])
             {
                 if (bot_ != o.bot_)
                 {
@@ -216,13 +189,9 @@ namespace Events.Instance
             }
             if (touched[2])
             {
-                deserializer.Read(out guid_);
-            }
-            if (touched[3])
-            {
                 deserializer.Read(out gold_);
             }
-            if (touched[4])
+            if (touched[3])
             {
                 deserializer.Read(out bot_);
             }
@@ -233,7 +202,6 @@ namespace Events.Instance
             base.Deserialize(deserializer);
             deserializer.Read("Account", out account_);
             deserializer.Read("Nick", out nick_);
-            deserializer.Read("Guid", out guid_);
             deserializer.Read("Gold", out gold_);
             deserializer.Read("Bot", out bot_);
         }
@@ -252,13 +220,9 @@ namespace Events.Instance
             }
             if (touched[2])
             {
-                serializer.Write(guid_);
-            }
-            if (touched[3])
-            {
                 serializer.Write(gold_);
             }
-            if (touched[4])
+            if (touched[3])
             {
                 serializer.Write(bot_);
             }
@@ -269,7 +233,6 @@ namespace Events.Instance
             base.Serialize(serializer);
             serializer.Write("Account", account_);
             serializer.Write("Nick", nick_);
-            serializer.Write("Guid", guid_);
             serializer.Write("Gold", gold_);
             serializer.Write("Bot", bot_);
         }
@@ -288,13 +251,9 @@ namespace Events.Instance
             }
             if (touched[2])
             {
-                length += Serializer.GetLength(guid_);
-            }
-            if (touched[3])
-            {
                 length += Serializer.GetLength(gold_);
             }
-            if (touched[4])
+            if (touched[3])
             {
                 length += Serializer.GetLength(bot_);
             }
@@ -306,7 +265,6 @@ namespace Events.Instance
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" Account=\"{0}\"", account_.Replace("\"", "\\\""));
             stringBuilder.AppendFormat(" Nick=\"{0}\"", nick_.Replace("\"", "\\\""));
-            stringBuilder.AppendFormat(" Guid={0}", guid_);
             stringBuilder.AppendFormat(" Gold={0}", gold_);
             stringBuilder.AppendFormat(" Bot={0}", bot_);
         }
@@ -315,7 +273,6 @@ namespace Events.Instance
         {
             account_ = "";
             nick_ = "";
-            guid_ = 0;
             gold_ = 0;
             bot_ = false;
         }
@@ -323,9 +280,9 @@ namespace Events.Instance
 
     public class EventMatchReq : Event
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
-        public new static int TypeId { get { return tag.TypeId; } }
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private int zone_;
         private Member requester_;
@@ -525,15 +482,14 @@ namespace Events.Instance
 
     public class EventMatchResp : Event
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
-        public new static int TypeId { get { return tag.TypeId; } }
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private int zone_;
         private int result_;
         private bool create_;
         private int serverId_;
-        private int runnerId_;
         private int instanceId_;
         private List<Member> members_;
 
@@ -577,22 +533,12 @@ namespace Events.Instance
             }
         }
 
-        public int RunnerId
-        {
-            get { return runnerId_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 4);
-                runnerId_ = value;
-            }
-        }
-
         public int InstanceId
         {
             get { return instanceId_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 5);
+                fingerprint.Touch(tag.Offset + 4);
                 instanceId_ = value;
             }
         }
@@ -602,14 +548,14 @@ namespace Events.Instance
             get { return members_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 6);
+                fingerprint.Touch(tag.Offset + 5);
                 members_ = value;
             }
         }
 
         static EventMatchResp()
         {
-            tag = new Tag(Event.tag, typeof(EventMatchResp), 7,
+            tag = new Tag(Event.tag, typeof(EventMatchResp), 6,
                     (int)EventInstanceTypes.MatchResp);
         }
 
@@ -650,10 +596,6 @@ namespace Events.Instance
                 return false;
             }
             if (serverId_ != o.serverId_)
-            {
-                return false;
-            }
-            if (runnerId_ != o.runnerId_)
             {
                 return false;
             }
@@ -699,16 +641,11 @@ namespace Events.Instance
             if (touched[4])
             {
                 hash.Update(tag.Offset + 4);
-                hash.Update(runnerId_);
+                hash.Update(instanceId_);
             }
             if (touched[5])
             {
                 hash.Update(tag.Offset + 5);
-                hash.Update(instanceId_);
-            }
-            if (touched[6])
-            {
-                hash.Update(tag.Offset + 6);
                 hash.Update(members_);
             }
             return hash.Code;
@@ -767,19 +704,12 @@ namespace Events.Instance
             }
             if (touched[4])
             {
-                if (runnerId_ != o.runnerId_)
-                {
-                    return false;
-                }
-            }
-            if (touched[5])
-            {
                 if (instanceId_ != o.instanceId_)
                 {
                     return false;
                 }
             }
-            if (touched[6])
+            if (touched[5])
             {
                 if (members_ != o.members_)
                 {
@@ -811,13 +741,9 @@ namespace Events.Instance
             }
             if (touched[4])
             {
-                deserializer.Read(out runnerId_);
-            }
-            if (touched[5])
-            {
                 deserializer.Read(out instanceId_);
             }
-            if (touched[6])
+            if (touched[5])
             {
                 deserializer.Read(out members_);
             }
@@ -830,7 +756,6 @@ namespace Events.Instance
             deserializer.Read("Result", out result_);
             deserializer.Read("Create", out create_);
             deserializer.Read("ServerId", out serverId_);
-            deserializer.Read("RunnerId", out runnerId_);
             deserializer.Read("InstanceId", out instanceId_);
             deserializer.Read("Members", out members_);
         }
@@ -857,13 +782,9 @@ namespace Events.Instance
             }
             if (touched[4])
             {
-                serializer.Write(runnerId_);
-            }
-            if (touched[5])
-            {
                 serializer.Write(instanceId_);
             }
-            if (touched[6])
+            if (touched[5])
             {
                 serializer.Write(members_);
             }
@@ -876,7 +797,6 @@ namespace Events.Instance
             serializer.Write("Result", result_);
             serializer.Write("Create", create_);
             serializer.Write("ServerId", serverId_);
-            serializer.Write("RunnerId", runnerId_);
             serializer.Write("InstanceId", instanceId_);
             serializer.Write("Members", members_);
         }
@@ -903,13 +823,9 @@ namespace Events.Instance
             }
             if (touched[4])
             {
-                length += Serializer.GetLength(runnerId_);
-            }
-            if (touched[5])
-            {
                 length += Serializer.GetLength(instanceId_);
             }
-            if (touched[6])
+            if (touched[5])
             {
                 length += Serializer.GetLength(members_);
             }
@@ -923,7 +839,6 @@ namespace Events.Instance
             stringBuilder.AppendFormat(" Result={0}", result_);
             stringBuilder.AppendFormat(" Create={0}", create_);
             stringBuilder.AppendFormat(" ServerId={0}", serverId_);
-            stringBuilder.AppendFormat(" RunnerId={0}", runnerId_);
             stringBuilder.AppendFormat(" InstanceId={0}", instanceId_);
             stringBuilder.AppendFormat(" Members={0}", members_.ToStringExtended());
         }
@@ -934,7 +849,6 @@ namespace Events.Instance
             result_ = 0;
             create_ = false;
             serverId_ = 0;
-            runnerId_ = 0;
             instanceId_ = 0;
             members_ = null;
         }
@@ -942,12 +856,11 @@ namespace Events.Instance
 
     public class EventInstanceBase : Event
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
-        public new static int TypeId { get { return tag.TypeId; } }
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private int serverId_;
-        private int runnerId_;
         private int instanceId_;
 
         public int ServerId
@@ -960,29 +873,19 @@ namespace Events.Instance
             }
         }
 
-        public int RunnerId
-        {
-            get { return runnerId_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 1);
-                runnerId_ = value;
-            }
-        }
-
         public int InstanceId
         {
             get { return instanceId_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 2);
+                fingerprint.Touch(tag.Offset + 1);
                 instanceId_ = value;
             }
         }
 
         static EventInstanceBase()
         {
-            tag = new Tag(Event.tag, typeof(EventInstanceBase), 3,
+            tag = new Tag(Event.tag, typeof(EventInstanceBase), 2,
                     (int)EventInstanceTypes.Base);
         }
 
@@ -1014,10 +917,6 @@ namespace Events.Instance
             {
                 return false;
             }
-            if (runnerId_ != o.runnerId_)
-            {
-                return false;
-            }
             if (instanceId_ != o.instanceId_)
             {
                 return false;
@@ -1041,11 +940,6 @@ namespace Events.Instance
             if (touched[1])
             {
                 hash.Update(tag.Offset + 1);
-                hash.Update(runnerId_);
-            }
-            if (touched[2])
-            {
-                hash.Update(tag.Offset + 2);
                 hash.Update(instanceId_);
             }
             return hash.Code;
@@ -1083,13 +977,6 @@ namespace Events.Instance
             }
             if (touched[1])
             {
-                if (runnerId_ != o.runnerId_)
-                {
-                    return false;
-                }
-            }
-            if (touched[2])
-            {
                 if (instanceId_ != o.instanceId_)
                 {
                     return false;
@@ -1108,10 +995,6 @@ namespace Events.Instance
             }
             if (touched[1])
             {
-                deserializer.Read(out runnerId_);
-            }
-            if (touched[2])
-            {
                 deserializer.Read(out instanceId_);
             }
         }
@@ -1120,7 +1003,6 @@ namespace Events.Instance
         {
             base.Deserialize(deserializer);
             deserializer.Read("ServerId", out serverId_);
-            deserializer.Read("RunnerId", out runnerId_);
             deserializer.Read("InstanceId", out instanceId_);
         }
 
@@ -1134,10 +1016,6 @@ namespace Events.Instance
             }
             if (touched[1])
             {
-                serializer.Write(runnerId_);
-            }
-            if (touched[2])
-            {
                 serializer.Write(instanceId_);
             }
         }
@@ -1146,7 +1024,6 @@ namespace Events.Instance
         {
             base.Serialize(serializer);
             serializer.Write("ServerId", serverId_);
-            serializer.Write("RunnerId", runnerId_);
             serializer.Write("InstanceId", instanceId_);
         }
 
@@ -1160,10 +1037,6 @@ namespace Events.Instance
             }
             if (touched[1])
             {
-                length += Serializer.GetLength(runnerId_);
-            }
-            if (touched[2])
-            {
                 length += Serializer.GetLength(instanceId_);
             }
             return length;
@@ -1173,27 +1046,23 @@ namespace Events.Instance
         {
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" ServerId={0}", serverId_);
-            stringBuilder.AppendFormat(" RunnerId={0}", runnerId_);
             stringBuilder.AppendFormat(" InstanceId={0}", instanceId_);
         }
 
         private void Initialize()
         {
             serverId_ = 0;
-            runnerId_ = 0;
             instanceId_ = 0;
         }
     }
 
     public class EventJoinReq : EventInstanceBase
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
-        public new static int TypeId { get { return tag.TypeId; } }
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private int zone_;
-        private int result_;
-        private bool create_;
         private List<Member> members_;
 
         public int Zone
@@ -1206,39 +1075,19 @@ namespace Events.Instance
             }
         }
 
-        public int Result
-        {
-            get { return result_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 1);
-                result_ = value;
-            }
-        }
-
-        public bool Create
-        {
-            get { return create_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 2);
-                create_ = value;
-            }
-        }
-
         public List<Member> Members
         {
             get { return members_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 3);
+                fingerprint.Touch(tag.Offset + 1);
                 members_ = value;
             }
         }
 
         static EventJoinReq()
         {
-            tag = new Tag(EventInstanceBase.tag, typeof(EventJoinReq), 4,
+            tag = new Tag(EventInstanceBase.tag, typeof(EventJoinReq), 2,
                     (int)EventInstanceTypes.JoinReq);
         }
 
@@ -1270,14 +1119,6 @@ namespace Events.Instance
             {
                 return false;
             }
-            if (result_ != o.result_)
-            {
-                return false;
-            }
-            if (create_ != o.create_)
-            {
-                return false;
-            }
             if (!Extensions.EqualsExtended(members_, o.members_))
             {
                 return false;
@@ -1301,16 +1142,6 @@ namespace Events.Instance
             if (touched[1])
             {
                 hash.Update(tag.Offset + 1);
-                hash.Update(result_);
-            }
-            if (touched[2])
-            {
-                hash.Update(tag.Offset + 2);
-                hash.Update(create_);
-            }
-            if (touched[3])
-            {
-                hash.Update(tag.Offset + 3);
                 hash.Update(members_);
             }
             return hash.Code;
@@ -1348,20 +1179,6 @@ namespace Events.Instance
             }
             if (touched[1])
             {
-                if (result_ != o.result_)
-                {
-                    return false;
-                }
-            }
-            if (touched[2])
-            {
-                if (create_ != o.create_)
-                {
-                    return false;
-                }
-            }
-            if (touched[3])
-            {
                 if (members_ != o.members_)
                 {
                     return false;
@@ -1380,14 +1197,6 @@ namespace Events.Instance
             }
             if (touched[1])
             {
-                deserializer.Read(out result_);
-            }
-            if (touched[2])
-            {
-                deserializer.Read(out create_);
-            }
-            if (touched[3])
-            {
                 deserializer.Read(out members_);
             }
         }
@@ -1396,8 +1205,6 @@ namespace Events.Instance
         {
             base.Deserialize(deserializer);
             deserializer.Read("Zone", out zone_);
-            deserializer.Read("Result", out result_);
-            deserializer.Read("Create", out create_);
             deserializer.Read("Members", out members_);
         }
 
@@ -1411,14 +1218,6 @@ namespace Events.Instance
             }
             if (touched[1])
             {
-                serializer.Write(result_);
-            }
-            if (touched[2])
-            {
-                serializer.Write(create_);
-            }
-            if (touched[3])
-            {
                 serializer.Write(members_);
             }
         }
@@ -1427,8 +1226,6 @@ namespace Events.Instance
         {
             base.Serialize(serializer);
             serializer.Write("Zone", zone_);
-            serializer.Write("Result", result_);
-            serializer.Write("Create", create_);
             serializer.Write("Members", members_);
         }
 
@@ -1442,14 +1239,6 @@ namespace Events.Instance
             }
             if (touched[1])
             {
-                length += Serializer.GetLength(result_);
-            }
-            if (touched[2])
-            {
-                length += Serializer.GetLength(create_);
-            }
-            if (touched[3])
-            {
                 length += Serializer.GetLength(members_);
             }
             return length;
@@ -1459,25 +1248,21 @@ namespace Events.Instance
         {
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" Zone={0}", zone_);
-            stringBuilder.AppendFormat(" Result={0}", result_);
-            stringBuilder.AppendFormat(" Create={0}", create_);
             stringBuilder.AppendFormat(" Members={0}", members_.ToStringExtended());
         }
 
         private void Initialize()
         {
             zone_ = 0;
-            result_ = 0;
-            create_ = false;
             members_ = null;
         }
     }
 
     public class EventJoinResp : EventInstanceBase
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
-        public new static int TypeId { get { return tag.TypeId; } }
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private int result_;
         private List<Member> members_;
@@ -1677,9 +1462,9 @@ namespace Events.Instance
 
     public class EventLeaveReq : EventInstanceBase
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
-        public new static int TypeId { get { return tag.TypeId; } }
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private string account_;
 
@@ -1836,9 +1621,9 @@ namespace Events.Instance
 
     public class EventLeaveResp : EventInstanceBase
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
-        public new static int TypeId { get { return tag.TypeId; } }
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private string account_;
         private int result_;
@@ -2036,14 +1821,117 @@ namespace Events.Instance
         }
     }
 
+    public class EventDestroySelf : EventInstanceBase
+    {
+        new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
+
+        static EventDestroySelf()
+        {
+            tag = new Tag(EventInstanceBase.tag, typeof(EventDestroySelf), 0,
+                    (int)EventInstanceTypes.DestroySelf);
+        }
+
+        public new static EventDestroySelf New()
+        {
+            return new EventDestroySelf();
+        }
+
+        public EventDestroySelf()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected EventDestroySelf(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return EventDestroySelf.New;
+        }
+
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        {
+            if (!base.IsEquivalent(other, fingerprint))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override void Deserialize(Deserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+        }
+
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+        }
+
+        public override void Serialize(VerboseSerializer serializer)
+        {
+            base.Serialize(serializer);
+        }
+
+        public override int GetLength()
+        {
+            int length = base.GetLength();
+            return length;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+        }
+
+        private void Initialize()
+        {
+        }
+    }
+
     public class EventStatus : Event
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
-        public new static int TypeId { get { return tag.TypeId; } }
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private int serverId_;
-        private int runnerId_;
         private int instanceId_;
         private int status_;
         private List<Member> members_;
@@ -2058,22 +1946,12 @@ namespace Events.Instance
             }
         }
 
-        public int RunnerId
-        {
-            get { return runnerId_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 1);
-                runnerId_ = value;
-            }
-        }
-
         public int InstanceId
         {
             get { return instanceId_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 2);
+                fingerprint.Touch(tag.Offset + 1);
                 instanceId_ = value;
             }
         }
@@ -2083,7 +1961,7 @@ namespace Events.Instance
             get { return status_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 3);
+                fingerprint.Touch(tag.Offset + 2);
                 status_ = value;
             }
         }
@@ -2093,14 +1971,14 @@ namespace Events.Instance
             get { return members_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 4);
+                fingerprint.Touch(tag.Offset + 3);
                 members_ = value;
             }
         }
 
         static EventStatus()
         {
-            tag = new Tag(Event.tag, typeof(EventStatus), 5,
+            tag = new Tag(Event.tag, typeof(EventStatus), 4,
                     (int)EventInstanceTypes.Status);
         }
 
@@ -2129,10 +2007,6 @@ namespace Events.Instance
             }
             EventStatus o = (EventStatus)other;
             if (serverId_ != o.serverId_)
-            {
-                return false;
-            }
-            if (runnerId_ != o.runnerId_)
             {
                 return false;
             }
@@ -2167,21 +2041,16 @@ namespace Events.Instance
             if (touched[1])
             {
                 hash.Update(tag.Offset + 1);
-                hash.Update(runnerId_);
+                hash.Update(instanceId_);
             }
             if (touched[2])
             {
                 hash.Update(tag.Offset + 2);
-                hash.Update(instanceId_);
+                hash.Update(status_);
             }
             if (touched[3])
             {
                 hash.Update(tag.Offset + 3);
-                hash.Update(status_);
-            }
-            if (touched[4])
-            {
-                hash.Update(tag.Offset + 4);
                 hash.Update(members_);
             }
             return hash.Code;
@@ -2219,26 +2088,19 @@ namespace Events.Instance
             }
             if (touched[1])
             {
-                if (runnerId_ != o.runnerId_)
+                if (instanceId_ != o.instanceId_)
                 {
                     return false;
                 }
             }
             if (touched[2])
             {
-                if (instanceId_ != o.instanceId_)
-                {
-                    return false;
-                }
-            }
-            if (touched[3])
-            {
                 if (status_ != o.status_)
                 {
                     return false;
                 }
             }
-            if (touched[4])
+            if (touched[3])
             {
                 if (members_ != o.members_)
                 {
@@ -2258,17 +2120,13 @@ namespace Events.Instance
             }
             if (touched[1])
             {
-                deserializer.Read(out runnerId_);
+                deserializer.Read(out instanceId_);
             }
             if (touched[2])
             {
-                deserializer.Read(out instanceId_);
-            }
-            if (touched[3])
-            {
                 deserializer.Read(out status_);
             }
-            if (touched[4])
+            if (touched[3])
             {
                 deserializer.Read(out members_);
             }
@@ -2278,7 +2136,6 @@ namespace Events.Instance
         {
             base.Deserialize(deserializer);
             deserializer.Read("ServerId", out serverId_);
-            deserializer.Read("RunnerId", out runnerId_);
             deserializer.Read("InstanceId", out instanceId_);
             deserializer.Read("Status", out status_);
             deserializer.Read("Members", out members_);
@@ -2294,17 +2151,13 @@ namespace Events.Instance
             }
             if (touched[1])
             {
-                serializer.Write(runnerId_);
+                serializer.Write(instanceId_);
             }
             if (touched[2])
             {
-                serializer.Write(instanceId_);
-            }
-            if (touched[3])
-            {
                 serializer.Write(status_);
             }
-            if (touched[4])
+            if (touched[3])
             {
                 serializer.Write(members_);
             }
@@ -2314,7 +2167,6 @@ namespace Events.Instance
         {
             base.Serialize(serializer);
             serializer.Write("ServerId", serverId_);
-            serializer.Write("RunnerId", runnerId_);
             serializer.Write("InstanceId", instanceId_);
             serializer.Write("Status", status_);
             serializer.Write("Members", members_);
@@ -2330,17 +2182,13 @@ namespace Events.Instance
             }
             if (touched[1])
             {
-                length += Serializer.GetLength(runnerId_);
+                length += Serializer.GetLength(instanceId_);
             }
             if (touched[2])
             {
-                length += Serializer.GetLength(instanceId_);
-            }
-            if (touched[3])
-            {
                 length += Serializer.GetLength(status_);
             }
-            if (touched[4])
+            if (touched[3])
             {
                 length += Serializer.GetLength(members_);
             }
@@ -2351,7 +2199,6 @@ namespace Events.Instance
         {
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" ServerId={0}", serverId_);
-            stringBuilder.AppendFormat(" RunnerId={0}", runnerId_);
             stringBuilder.AppendFormat(" InstanceId={0}", instanceId_);
             stringBuilder.AppendFormat(" Status={0}", status_);
             stringBuilder.AppendFormat(" Members={0}", members_.ToStringExtended());
@@ -2360,298 +2207,9 @@ namespace Events.Instance
         private void Initialize()
         {
             serverId_ = 0;
-            runnerId_ = 0;
             instanceId_ = 0;
             status_ = 0;
             members_ = null;
-        }
-    }
-
-    public class EventRunnerStatus : Event
-    {
-        protected new static readonly Tag tag;
-
-        public new static int TypeId { get { return tag.TypeId; } }
-
-        private int serverId_;
-        private int runnerId_;
-        private int status_;
-        private int instanceCount_;
-
-        public int ServerId
-        {
-            get { return serverId_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 0);
-                serverId_ = value;
-            }
-        }
-
-        public int RunnerId
-        {
-            get { return runnerId_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 1);
-                runnerId_ = value;
-            }
-        }
-
-        public int Status
-        {
-            get { return status_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 2);
-                status_ = value;
-            }
-        }
-
-        public int InstanceCount
-        {
-            get { return instanceCount_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 3);
-                instanceCount_ = value;
-            }
-        }
-
-        static EventRunnerStatus()
-        {
-            tag = new Tag(Event.tag, typeof(EventRunnerStatus), 4,
-                    (int)EventInstanceTypes.RunnerStatus);
-        }
-
-        public new static EventRunnerStatus New()
-        {
-            return new EventRunnerStatus();
-        }
-
-        public EventRunnerStatus()
-            : base(tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected EventRunnerStatus(int length)
-            : base(length + tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected override bool EqualsTo(Cell other)
-        {
-            if (!base.EqualsTo(other))
-            {
-                return false;
-            }
-            EventRunnerStatus o = (EventRunnerStatus)other;
-            if (serverId_ != o.serverId_)
-            {
-                return false;
-            }
-            if (runnerId_ != o.runnerId_)
-            {
-                return false;
-            }
-            if (status_ != o.status_)
-            {
-                return false;
-            }
-            if (instanceCount_ != o.instanceCount_)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override int GetHashCode(Fingerprint fingerprint)
-        {
-            var hash = new Hash(base.GetHashCode(fingerprint));
-            if (fingerprint.Length <= tag.Offset)
-            {
-                return hash.Code;
-            }
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                hash.Update(tag.Offset + 0);
-                hash.Update(serverId_);
-            }
-            if (touched[1])
-            {
-                hash.Update(tag.Offset + 1);
-                hash.Update(runnerId_);
-            }
-            if (touched[2])
-            {
-                hash.Update(tag.Offset + 2);
-                hash.Update(status_);
-            }
-            if (touched[3])
-            {
-                hash.Update(tag.Offset + 3);
-                hash.Update(instanceCount_);
-            }
-            return hash.Code;
-        }
-
-        public override int GetTypeId()
-        {
-            return tag.TypeId;
-        }
-
-        public override Cell.Tag GetTypeTag() 
-        {
-            return tag;
-        }
-
-        public override Func<Event> GetFactoryMethod()
-        {
-            return EventRunnerStatus.New;
-        }
-
-        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
-        {
-            if (!base.IsEquivalent(other, fingerprint))
-            {
-                return false;
-            }
-            EventRunnerStatus o = (EventRunnerStatus)other;
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                if (serverId_ != o.serverId_)
-                {
-                    return false;
-                }
-            }
-            if (touched[1])
-            {
-                if (runnerId_ != o.runnerId_)
-                {
-                    return false;
-                }
-            }
-            if (touched[2])
-            {
-                if (status_ != o.status_)
-                {
-                    return false;
-                }
-            }
-            if (touched[3])
-            {
-                if (instanceCount_ != o.instanceCount_)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public override void Deserialize(Deserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                deserializer.Read(out serverId_);
-            }
-            if (touched[1])
-            {
-                deserializer.Read(out runnerId_);
-            }
-            if (touched[2])
-            {
-                deserializer.Read(out status_);
-            }
-            if (touched[3])
-            {
-                deserializer.Read(out instanceCount_);
-            }
-        }
-
-        public override void Deserialize(VerboseDeserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            deserializer.Read("ServerId", out serverId_);
-            deserializer.Read("RunnerId", out runnerId_);
-            deserializer.Read("Status", out status_);
-            deserializer.Read("InstanceCount", out instanceCount_);
-        }
-
-        public override void Serialize(Serializer serializer)
-        {
-            base.Serialize(serializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                serializer.Write(serverId_);
-            }
-            if (touched[1])
-            {
-                serializer.Write(runnerId_);
-            }
-            if (touched[2])
-            {
-                serializer.Write(status_);
-            }
-            if (touched[3])
-            {
-                serializer.Write(instanceCount_);
-            }
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-            serializer.Write("ServerId", serverId_);
-            serializer.Write("RunnerId", runnerId_);
-            serializer.Write("Status", status_);
-            serializer.Write("InstanceCount", instanceCount_);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                length += Serializer.GetLength(serverId_);
-            }
-            if (touched[1])
-            {
-                length += Serializer.GetLength(runnerId_);
-            }
-            if (touched[2])
-            {
-                length += Serializer.GetLength(status_);
-            }
-            if (touched[3])
-            {
-                length += Serializer.GetLength(instanceCount_);
-            }
-            return length;
-        }
-
-        protected override void Describe(StringBuilder stringBuilder)
-        {
-            base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" ServerId={0}", serverId_);
-            stringBuilder.AppendFormat(" RunnerId={0}", runnerId_);
-            stringBuilder.AppendFormat(" Status={0}", status_);
-            stringBuilder.AppendFormat(" InstanceCount={0}", instanceCount_);
-        }
-
-        private void Initialize()
-        {
-            serverId_ = 0;
-            runnerId_ = 0;
-            status_ = 0;
-            instanceCount_ = 0;
         }
     }
 }

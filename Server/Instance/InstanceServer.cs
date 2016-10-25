@@ -6,13 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using x2;
 
-namespace Server.Game
+namespace Server.Instance
 {
-    public class GameNetServer : AsyncTcpServer
+    public class InstanceServer : AsyncTcpServer
     {
         Config config;
 
-        public GameNetServer(Config cfg)
+        public InstanceServer(Config cfg)
             : base(cfg.Name)
         {
             config = cfg;

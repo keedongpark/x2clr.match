@@ -71,17 +71,15 @@
     <Compile Include="Core\Action\TimeData.cs" />
     <Compile Include="Couchbase\Query.cs" />
     <Compile Include="Couchbase\UserDatabaseCase.cs" />
-    <Compile Include="Game\Config.cs" />
-    <Compile Include="Game\GameNetServer.cs" />
-    <Compile Include="Game\Instance.cs" />
-    <Compile Include="Game\InstanceCoordinator.cs" />
-    <Compile Include="Game\InstanceFactory.cs" />
-    <Compile Include="Game\InstanceRunner.cs" />
-    <Compile Include="Game\MasterClient.cs" />
+    <Compile Include="Instance\Config.cs" />
+    <Compile Include="Instance\InstanceServer.cs" />
+    <Compile Include="Instance\Instance.cs" />
+    <Compile Include="Instance\InstanceCoordinator.cs" />
+    <Compile Include="Instance\MasterClient.cs" />
     <Compile Include="Master\Config.cs" />
     <Compile Include="Master\ClusterCase.cs" />
     <Compile Include="Master\AuthCase.cs" />
-    <Compile Include="Master\MasterNetServer.cs" />
+    <Compile Include="Master\MasterServer.cs" />
     <Compile Include="Master\MatchCase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -89,7 +87,7 @@
     <Compile Include="Session\LoginCase.cs" />
     <Compile Include="Session\Main.cs" />
     <Compile Include="Session\MasterClient.cs" />
-    <Compile Include="Session\SessionNetServer.cs" />
+    <Compile Include="Session\SessionServer.cs" />
     <Compile Include="Session\UserCase.cs" />
     <Compile Include="Shared\User.cs" />
   </ItemGroup>
@@ -108,7 +106,9 @@
       <Name>x2clr.net40</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Instance\Game\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
