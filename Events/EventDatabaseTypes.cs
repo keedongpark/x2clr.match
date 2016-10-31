@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace Events.Database
 {
-    /// <summary>
-    /// 5001 ~ 6000
-    /// </summary>
     public enum EventDatabaseTypes
     {
-        Base = 5001, 
+        Base = EventTypeRange.DatabaseBegin,
         CreateOrLoadUserReq, 
         LoadUserReq, 
         LoadUserResp, 

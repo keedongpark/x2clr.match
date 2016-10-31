@@ -159,6 +159,8 @@ namespace Test
 
             Hub.Shutdown();
 
+            Hub.Instance.DetachAll();
+
             ClusterHelper.Close();
 
             // Couchbase 성능이 C#에서 C++보다 더 좋다. 

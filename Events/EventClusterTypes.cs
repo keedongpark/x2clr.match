@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Events
 {
-    // range from 1001 ~ 2000
     public enum EventClusterTypes
     {
-        ServerList = 1001, 
+        ServerList = EventTypeRange.ClusterBegin, 
         Join,
         Leave,
         End,

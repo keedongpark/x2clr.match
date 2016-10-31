@@ -104,7 +104,7 @@ namespace Server.Client
                 IsMatched = true;
 
                 serverId = resp.ServerId;
-                instanceId = resp.InstanceId;
+                instanceId = 0;
                 members = resp.Members;
             }
             else

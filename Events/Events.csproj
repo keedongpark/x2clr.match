@@ -50,7 +50,10 @@
     <Compile Include="EventLoginTypes.cs" />
     <Compile Include="EventClusterTypes.cs" />
     <Compile Include="EventLogin.cs" />
+    <Compile Include="EventTimer.cs" />
+    <Compile Include="EventTypeRange.cs" />
     <Compile Include="EventTests.cs" />
+    <Compile Include="EventTimerTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +64,7 @@
     </Content>
     <Content Include="EventLogin.xml" />
     <Content Include="EventTests.xml" />
+    <Content Include="EventTimer.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\x2clr\x2\x2clr.net40.csproj">

@@ -13,6 +13,13 @@ namespace Test
     [TestFixture]
     class TestInstances
     {
+        [TearDown]
+        public void TearDown()
+        {
+            Hub.Shutdown();
+            Hub.Instance.DetachAll();
+        }
+
         [Test]
         public void TestAll()
         {
@@ -44,8 +51,6 @@ namespace Test
             {
                 Thread.Sleep(10);
             }
-
-            Hub.Shutdown();
         }
 
         class TestCase : Case

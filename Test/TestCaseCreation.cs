@@ -11,6 +11,13 @@ namespace Test
     [TestFixture]
     class TestCaseCreation
     {
+        [TearDown]
+        public void TearDown()
+        {
+            Hub.Shutdown();
+            Hub.Instance.DetachAll();
+        }
+
         /// <summary>
         /// Test creation of a Case outside the holder Flow
         /// - The creator needs to know the owning flow
@@ -37,7 +44,6 @@ namespace Test
 
             Assert.IsTrue(Object.ReferenceEquals(f1, c1.Flow));
 
-            Hub.Shutdown();
         }
 
         [Test]
@@ -65,7 +71,6 @@ namespace Test
 
             Thread.Sleep(100);
 
-            Hub.Shutdown();
         }
 
         class TestCase : Case

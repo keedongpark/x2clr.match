@@ -11,7 +11,7 @@ namespace Events.Instance
     /// </summary>
     public enum EventInstanceTypes
     {
-        Base = 4001, 
+        Base = EventTypeRange.InstanceBegin, 
         MatchReq, 
         MatchResp, 
         CreateReq, 

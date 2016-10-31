@@ -15,9 +15,7 @@
   <event name="EventMatchResp" id="EventInstanceTypes.MatchResp">
     <property name="Zone"               type="int32"/>
     <property name="Result"             type="int32"/>
-    <property name="Create"             type="bool"/>
     <property name="ServerId"           type="int32"/>
-    <property name="InstanceId"         type="int32"/>
     <property name="Members"            type="list(Member)"/>
   </event>
 

@@ -56,6 +56,8 @@ namespace Test
 
             Hub.Shutdown();
 
+            Hub.Instance.DetachAll();
+
             ClusterHelper.Close();
         }
     }

@@ -9,7 +9,7 @@ namespace Events
     // range from 2001 ~ 3000
     public enum EventLoginTypes
     {
-        LoginBase= 2001,
+        LoginBase= EventTypeRange.LoginBegin,
         LoginReq,
         LoginResp,
         Logout,

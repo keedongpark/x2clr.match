@@ -12,10 +12,16 @@ namespace Test
     [TestFixture]
     class TestMatching
     {
+        [TearDown]
+        public void TearDown()
+        {
+            Hub.Shutdown();
+            Hub.Instance.DetachAll();
+        }
+
         [Test]
         public void TestMatchingFlow()
         {
-
 
         }
     }

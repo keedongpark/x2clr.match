@@ -488,9 +488,7 @@ namespace Events.Instance
 
         private int zone_;
         private int result_;
-        private bool create_;
         private int serverId_;
-        private int instanceId_;
         private List<Member> members_;
 
         public int Zone
@@ -513,33 +511,13 @@ namespace Events.Instance
             }
         }
 
-        public bool Create
-        {
-            get { return create_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 2);
-                create_ = value;
-            }
-        }
-
         public int ServerId
         {
             get { return serverId_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 3);
+                fingerprint.Touch(tag.Offset + 2);
                 serverId_ = value;
-            }
-        }
-
-        public int InstanceId
-        {
-            get { return instanceId_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 4);
-                instanceId_ = value;
             }
         }
 
@@ -548,14 +526,14 @@ namespace Events.Instance
             get { return members_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 5);
+                fingerprint.Touch(tag.Offset + 3);
                 members_ = value;
             }
         }
 
         static EventMatchResp()
         {
-            tag = new Tag(Event.tag, typeof(EventMatchResp), 6,
+            tag = new Tag(Event.tag, typeof(EventMatchResp), 4,
                     (int)EventInstanceTypes.MatchResp);
         }
 
@@ -591,15 +569,7 @@ namespace Events.Instance
             {
                 return false;
             }
-            if (create_ != o.create_)
-            {
-                return false;
-            }
             if (serverId_ != o.serverId_)
-            {
-                return false;
-            }
-            if (instanceId_ != o.instanceId_)
             {
                 return false;
             }
@@ -631,21 +601,11 @@ namespace Events.Instance
             if (touched[2])
             {
                 hash.Update(tag.Offset + 2);
-                hash.Update(create_);
+                hash.Update(serverId_);
             }
             if (touched[3])
             {
                 hash.Update(tag.Offset + 3);
-                hash.Update(serverId_);
-            }
-            if (touched[4])
-            {
-                hash.Update(tag.Offset + 4);
-                hash.Update(instanceId_);
-            }
-            if (touched[5])
-            {
-                hash.Update(tag.Offset + 5);
                 hash.Update(members_);
             }
             return hash.Code;
@@ -690,26 +650,12 @@ namespace Events.Instance
             }
             if (touched[2])
             {
-                if (create_ != o.create_)
-                {
-                    return false;
-                }
-            }
-            if (touched[3])
-            {
                 if (serverId_ != o.serverId_)
                 {
                     return false;
                 }
             }
-            if (touched[4])
-            {
-                if (instanceId_ != o.instanceId_)
-                {
-                    return false;
-                }
-            }
-            if (touched[5])
+            if (touched[3])
             {
                 if (members_ != o.members_)
                 {
@@ -733,17 +679,9 @@ namespace Events.Instance
             }
             if (touched[2])
             {
-                deserializer.Read(out create_);
-            }
-            if (touched[3])
-            {
                 deserializer.Read(out serverId_);
             }
-            if (touched[4])
-            {
-                deserializer.Read(out instanceId_);
-            }
-            if (touched[5])
+            if (touched[3])
             {
                 deserializer.Read(out members_);
             }
@@ -754,9 +692,7 @@ namespace Events.Instance
             base.Deserialize(deserializer);
             deserializer.Read("Zone", out zone_);
             deserializer.Read("Result", out result_);
-            deserializer.Read("Create", out create_);
             deserializer.Read("ServerId", out serverId_);
-            deserializer.Read("InstanceId", out instanceId_);
             deserializer.Read("Members", out members_);
         }
 
@@ -774,17 +710,9 @@ namespace Events.Instance
             }
             if (touched[2])
             {
-                serializer.Write(create_);
-            }
-            if (touched[3])
-            {
                 serializer.Write(serverId_);
             }
-            if (touched[4])
-            {
-                serializer.Write(instanceId_);
-            }
-            if (touched[5])
+            if (touched[3])
             {
                 serializer.Write(members_);
             }
@@ -795,9 +723,7 @@ namespace Events.Instance
             base.Serialize(serializer);
             serializer.Write("Zone", zone_);
             serializer.Write("Result", result_);
-            serializer.Write("Create", create_);
             serializer.Write("ServerId", serverId_);
-            serializer.Write("InstanceId", instanceId_);
             serializer.Write("Members", members_);
         }
 
@@ -815,17 +741,9 @@ namespace Events.Instance
             }
             if (touched[2])
             {
-                length += Serializer.GetLength(create_);
-            }
-            if (touched[3])
-            {
                 length += Serializer.GetLength(serverId_);
             }
-            if (touched[4])
-            {
-                length += Serializer.GetLength(instanceId_);
-            }
-            if (touched[5])
+            if (touched[3])
             {
                 length += Serializer.GetLength(members_);
             }
@@ -837,9 +755,7 @@ namespace Events.Instance
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" Zone={0}", zone_);
             stringBuilder.AppendFormat(" Result={0}", result_);
-            stringBuilder.AppendFormat(" Create={0}", create_);
             stringBuilder.AppendFormat(" ServerId={0}", serverId_);
-            stringBuilder.AppendFormat(" InstanceId={0}", instanceId_);
             stringBuilder.AppendFormat(" Members={0}", members_.ToStringExtended());
         }
 
@@ -847,9 +763,7 @@ namespace Events.Instance
         {
             zone_ = 0;
             result_ = 0;
-            create_ = false;
             serverId_ = 0;
-            instanceId_ = 0;
             members_ = null;
         }
     }
